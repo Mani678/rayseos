@@ -1,0 +1,548 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="theme-color" content="#05050A">
+<meta name="robots" content="noindex">
+<title>RayseOS — Command Center</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;0,700;1,300;1,400;1,500&family=Outfit:wght@200;300;400;500;600&family=DM+Mono:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#05050A;--bg2:#07070D;--surface:#0A0A12;--surface2:#0E0E18;
+  --border:rgba(255,255,255,0.05);--border2:rgba(255,255,255,0.09);
+  --white:#F2F1EE;--off:rgba(242,241,238,0.55);--faint:rgba(242,241,238,0.22);
+  --dimmed:rgba(242,241,238,0.07);
+  --blade:#E8C97D;--blade-dim:rgba(232,201,125,0.09);--blade-lt:#F0D99A;
+  --green:#7ecb9b;--red:#c97d7d;
+  --serif:'Cormorant Garamond',Georgia,serif;
+  --sans:'Outfit',-apple-system,sans-serif;
+  --mono:'DM Mono',monospace;
+  --nav-h:56px;
+}
+html,body{background:var(--bg);color:var(--white);font-family:var(--sans);font-size:14px;min-height:100vh;overflow-x:hidden;-webkit-font-smoothing:antialiased;font-weight:300}
+body::after{content:'';position:fixed;inset:0;background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 512 512' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='g'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23g)' opacity='0.04'/%3E%3C/svg%3E");pointer-events:none;z-index:9999;opacity:0.4}
+.screen{display:none;min-height:100vh;position:relative;z-index:2}
+.screen.active{display:block}
+@keyframes fadeUp{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:translateY(0)}}
+@keyframes fadeIn{from{opacity:0}to{opacity:1}}
+@keyframes bladeIn{from{width:0}to{width:100%}}
+@keyframes spin{to{transform:rotate(360deg)}}
+@keyframes checkPop{0%{transform:scale(0.3);opacity:0}60%{transform:scale(1.2)}100%{transform:scale(1);opacity:1}}
+@keyframes barGrow{from{width:0}}
+@keyframes slideIn{from{opacity:0;transform:translateX(16px)}to{opacity:1;transform:translateX(0)}}
+
+/* ONBOARDING */
+#screen-onboard{display:flex;flex-direction:column;min-height:100vh}
+.ob-nav{display:flex;align-items:center;justify-content:space-between;padding:16px 48px;border-bottom:1px solid var(--border);flex-shrink:0}
+.ob-wordmark{font-family:var(--serif);font-size:18px;font-weight:500;letter-spacing:0.04em;color:var(--white)}
+.ob-wordmark em{font-style:normal;color:var(--blade)}
+.ob-tagline{font-family:var(--mono);font-size:10px;font-weight:300;color:var(--faint);text-transform:uppercase;letter-spacing:0.14em}
+.ob-hero{text-align:center;padding:60px 40px 44px;animation:fadeUp 0.5s ease both}
+.ob-eyebrow{font-family:var(--mono);font-size:10px;font-weight:300;color:var(--blade);text-transform:uppercase;letter-spacing:0.18em;margin-bottom:20px;display:flex;align-items:center;justify-content:center;gap:12px}
+.ob-eyebrow::before,.ob-eyebrow::after{content:'';width:28px;height:1px;background:var(--blade);opacity:0.4}
+.ob-title{font-family:var(--serif);font-size:clamp(40px,7vw,68px);font-weight:300;line-height:0.95;letter-spacing:-0.01em;margin-bottom:8px}
+.ob-title strong{font-weight:600;display:block}
+.ob-title em{font-style:italic;color:var(--blade);display:block}
+.ob-blade{display:block;width:0;height:2px;background:var(--blade);margin:18px auto;animation:bladeIn 0.8s ease 0.5s forwards;opacity:0.5;max-width:44px}
+.ob-sub{font-size:15px;color:var(--off);font-weight:300;max-width:460px;margin:0 auto;line-height:1.75}
+.ob-steps{display:flex;align-items:center;justify-content:center;max-width:380px;margin:0 auto 36px;padding:0 40px}
+.ob-step{display:flex;flex-direction:column;align-items:center;gap:6px;flex:1}
+.ob-step-circle{width:24px;height:24px;border-radius:50%;border:1px solid rgba(255,255,255,0.1);display:flex;align-items:center;justify-content:center;font-family:var(--mono);font-size:9px;font-weight:300;color:rgba(242,241,238,0.2);transition:all 0.3s}
+.ob-step.active .ob-step-circle{border-color:var(--blade);background:var(--blade-dim);color:var(--blade)}
+.ob-step.done .ob-step-circle{background:var(--blade);border-color:var(--blade);color:#000;font-weight:500}
+.ob-step-lbl{font-family:var(--mono);font-size:8px;color:rgba(242,241,238,0.18);text-transform:uppercase;letter-spacing:0.1em}
+.ob-step.active .ob-step-lbl{color:rgba(232,201,125,0.6)}
+.ob-step-line{flex:1;height:1px;background:rgba(255,255,255,0.06);margin:0 4px;align-self:flex-start;margin-top:12px}
+.ob-form-wrap{max-width:780px;margin:0 auto;padding:0 40px 80px;width:100%}
+.ob-panel{display:none;animation:slideIn 0.3s ease both}
+.ob-panel.active{display:block}
+.ob-card{background:rgba(255,255,255,0.02);border:1px solid var(--border2);padding:32px 36px}
+.ob-card-title{font-family:var(--serif);font-size:22px;font-weight:400;margin-bottom:6px;letter-spacing:0.01em}
+.ob-card-title em{font-style:italic;color:var(--blade)}
+.ob-card-sub{font-size:13px;color:var(--off);font-weight:300;margin-bottom:24px;line-height:1.6}
+.ob-grid{display:grid;grid-template-columns:1fr 1fr;gap:20px}
+.ob-field{display:flex;flex-direction:column;gap:8px}
+.ob-field.span2{grid-column:1/-1}
+.ob-label{font-family:var(--mono);font-size:9px;font-weight:300;text-transform:uppercase;letter-spacing:0.14em;color:var(--faint)}
+.ob-input,.ob-select,.ob-textarea{background:transparent;border:none;border-bottom:1px solid rgba(242,241,238,0.12);color:var(--white);font-family:var(--sans);font-size:14px;font-weight:300;padding:10px 0;outline:none;transition:border-color 0.25s;-webkit-appearance:none;appearance:none}
+.ob-input:focus,.ob-select:focus,.ob-textarea:focus{border-bottom-color:var(--blade)}
+.ob-input::placeholder,.ob-textarea::placeholder{color:rgba(242,241,238,0.18)}
+.ob-textarea{resize:vertical;min-height:76px;line-height:1.6}
+.ob-select{cursor:pointer;background:transparent}
+.ob-select option{background:#0A0A12}
+.stage-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:8px}
+.stage-opt{padding:12px 8px;border:1px solid rgba(255,255,255,0.07);background:transparent;cursor:pointer;transition:all 0.2s;text-align:center}
+.stage-opt:hover{border-color:rgba(232,201,125,0.3);background:var(--blade-dim)}
+.stage-opt.active{border-color:var(--blade);background:var(--blade-dim)}
+.stage-icon{font-size:16px;margin-bottom:5px;display:block}
+.stage-name{font-family:var(--mono);font-size:10px;font-weight:400;margin-bottom:2px;letter-spacing:0.04em}
+.stage-desc{font-size:10px;color:var(--faint)}
+.chip-wrap{display:flex;flex-wrap:wrap;gap:8px}
+.chip{display:flex;align-items:center;gap:6px;padding:5px 12px;border:1px solid rgba(255,255,255,0.08);background:transparent;color:var(--faint);font-family:var(--mono);font-size:9px;font-weight:300;cursor:pointer;transition:all 0.2s;user-select:none;letter-spacing:0.04em}
+.chip:hover{border-color:rgba(232,201,125,0.3);color:var(--off)}
+.chip.active{background:var(--blade-dim);border-color:rgba(232,201,125,0.4);color:var(--blade)}
+.slider-row{display:flex;align-items:center;gap:14px}
+input[type=range]{flex:1;-webkit-appearance:none;height:1px;background:rgba(255,255,255,0.1);border-radius:1px;outline:none;cursor:pointer}
+input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:14px;height:14px;background:var(--blade);border-radius:50%;cursor:pointer}
+.slider-val{font-family:var(--serif);font-size:18px;font-weight:500;color:var(--blade);min-width:60px;text-align:right}
+.ob-nav-row{display:flex;align-items:center;justify-content:space-between;margin-top:22px}
+.ob-back-btn{padding:10px 20px;border:1px solid rgba(255,255,255,0.08);background:transparent;color:var(--faint);font-family:var(--mono);font-size:10px;font-weight:300;letter-spacing:0.1em;text-transform:uppercase;cursor:pointer;transition:all 0.2s}
+.ob-back-btn:hover{border-color:rgba(255,255,255,0.18);color:var(--off)}
+.ob-next-btn{padding:10px 26px;border:1px solid var(--blade);background:transparent;color:var(--blade);font-family:var(--mono);font-size:10px;font-weight:400;letter-spacing:0.12em;text-transform:uppercase;cursor:pointer;transition:all 0.2s}
+.ob-next-btn:hover{background:var(--blade);color:#000}
+.ob-error{display:none;color:var(--red);font-family:var(--mono);font-size:10px;margin-top:10px}
+.ob-error.visible{display:block}
+
+/* GENERATING */
+#screen-generating{display:flex;align-items:center;justify-content:center;min-height:100vh;flex-direction:column;gap:24px;text-align:center;padding:40px}
+.gen-ring{width:52px;height:52px;border:1px solid rgba(232,201,125,0.2);border-top-color:var(--blade);border-radius:50%;animation:spin 1s linear infinite}
+.gen-title{font-family:var(--serif);font-size:26px;font-weight:300;letter-spacing:0.01em}
+.gen-title em{font-style:italic;color:var(--blade)}
+.gen-steps{display:flex;flex-direction:column;gap:8px;max-width:320px}
+.gen-step{font-family:var(--mono);font-size:10px;font-weight:300;color:rgba(242,241,238,0.28);opacity:0;animation:fadeUp 0.5s ease forwards;letter-spacing:0.06em}
+
+/* DASHBOARD */
+#screen-dashboard{display:none}
+#screen-dashboard.active{display:block}
+
+.topbar{display:grid;grid-template-columns:1fr auto 1fr;align-items:center;padding:0 40px;height:var(--nav-h);border-bottom:1px solid var(--border);background:rgba(5,5,10,0.97);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);position:sticky;top:0;z-index:200}
+.tb-left{display:flex;align-items:center;gap:12px}
+.tb-wordmark{font-family:var(--serif);font-size:16px;font-weight:500;letter-spacing:0.04em;color:var(--white)}
+.tb-wordmark em{font-style:normal;color:var(--blade)}
+.tb-divider{width:1px;height:14px;background:var(--border2)}
+.tb-startup{font-family:var(--mono);font-size:11px;font-weight:300;color:var(--faint);letter-spacing:0.05em;max-width:150px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.tb-badge{font-family:var(--mono);font-size:8px;font-weight:300;padding:2px 7px;border:1px solid rgba(232,201,125,0.2);color:rgba(232,201,125,0.45);text-transform:uppercase;letter-spacing:0.1em}
+.tb-score{text-align:center}
+.tb-score-row{display:flex;align-items:baseline;justify-content:center;gap:4px}
+.tb-score-num{font-family:var(--serif);font-size:34px;font-weight:600;line-height:1;color:var(--blade);letter-spacing:-0.02em}
+.tb-score-denom{font-family:var(--serif);font-size:15px;font-weight:300;color:rgba(232,201,125,0.3)}
+.tb-score-delta{font-family:var(--mono);font-size:9px;color:var(--green);background:rgba(126,203,155,0.08);border:1px solid rgba(126,203,155,0.18);padding:2px 6px;letter-spacing:0.05em;margin-left:5px}
+.tb-score-lbl{display:block;font-family:var(--mono);font-size:8px;font-weight:300;color:rgba(242,241,238,0.18);text-transform:uppercase;letter-spacing:0.14em;margin-top:2px}
+.tb-right{display:flex;align-items:center;gap:14px;justify-content:flex-end}
+.tb-streak-val{font-family:var(--serif);font-size:15px;font-weight:500;color:var(--blade)}
+.tb-streak-lbl{font-family:var(--mono);font-size:8px;color:rgba(242,241,238,0.18);text-transform:uppercase;letter-spacing:0.1em}
+.tb-avatar{width:28px;height:28px;border:1px solid rgba(232,201,125,0.3);display:flex;align-items:center;justify-content:center;font-family:var(--serif);font-size:13px;font-weight:500;color:var(--blade);cursor:pointer;transition:border-color 0.2s;background:var(--blade-dim)}
+.tb-avatar:hover{border-color:var(--blade)}
+
+.prog-row{display:flex;align-items:center;gap:14px;padding:7px 40px;border-bottom:1px solid rgba(255,255,255,0.03)}
+.prog-lbl{font-family:var(--mono);font-size:9px;font-weight:300;color:rgba(242,241,238,0.18);text-transform:uppercase;letter-spacing:0.1em;white-space:nowrap}
+.prog-track{flex:1;height:1px;background:rgba(255,255,255,0.06);position:relative;overflow:hidden}
+.prog-fill{height:100%;background:var(--blade);animation:barGrow 1s ease 0.3s both;opacity:0.7}
+
+.db-main{display:grid;grid-template-columns:256px 1fr 216px;gap:0;min-height:calc(100vh - var(--nav-h) - 33px - 41px);border-bottom:1px solid var(--border)}
+.panel-lbl{font-family:var(--mono);font-size:9px;font-weight:300;text-transform:uppercase;letter-spacing:0.14em;color:rgba(242,241,238,0.18);display:flex;align-items:center;justify-content:space-between;margin-bottom:14px}
+
+.tasks-col{border-right:1px solid var(--border);padding:18px 18px 18px 22px;animation:fadeUp 0.5s ease 0.15s both}
+.tasks-scroll{max-height:calc(100vh - var(--nav-h) - 33px - 54px);overflow-y:auto;scrollbar-width:thin;scrollbar-color:rgba(232,201,125,0.15) transparent;padding-right:2px}
+.tasks-scroll::-webkit-scrollbar{width:2px}
+.tasks-scroll::-webkit-scrollbar-thumb{background:rgba(232,201,125,0.18)}
+
+.task-card{border:1px solid var(--border);padding:13px 14px;margin-bottom:6px;transition:border-color 0.25s,background 0.25s,opacity 0.3s;background:transparent}
+.task-card:hover:not(.done){border-color:rgba(232,201,125,0.2);background:rgba(232,201,125,0.02)}
+.task-card.done{opacity:0.35}
+.task-top{display:flex;align-items:center;justify-content:space-between;margin-bottom:8px}
+.ptag{font-family:var(--mono);font-size:8px;font-weight:400;padding:2px 7px;border:1px solid;text-transform:uppercase;letter-spacing:0.08em}
+.ptag-x{color:rgba(147,197,253,0.7);border-color:rgba(147,197,253,0.2);background:rgba(147,197,253,0.05)}
+.ptag-linkedin{color:rgba(96,165,250,0.7);border-color:rgba(96,165,250,0.2);background:rgba(96,165,250,0.05)}
+.ptag-tiktok{color:rgba(232,121,249,0.7);border-color:rgba(232,121,249,0.2);background:rgba(232,121,249,0.05)}
+.ptag-instagram{color:rgba(249,115,22,0.7);border-color:rgba(249,115,22,0.2);background:rgba(249,115,22,0.05)}
+.ptag-growth{color:var(--blade);border-color:rgba(232,201,125,0.2);background:var(--blade-dim)}
+.ptag-reddit{color:rgba(251,146,60,0.7);border-color:rgba(251,146,60,0.2);background:rgba(251,146,60,0.05)}
+.check-btn{width:17px;height:17px;border:1px solid rgba(255,255,255,0.18);background:transparent;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all 0.2s;flex-shrink:0}
+.check-btn:hover{border-color:var(--blade)}
+.check-btn.checked{background:var(--green);border-color:var(--green)}
+.checkmark{display:none;color:#000;font-size:9px;font-weight:700;animation:checkPop 0.3s cubic-bezier(0.34,1.56,0.64,1) both}
+.check-btn.checked .checkmark{display:flex;align-items:center;justify-content:center}
+.task-title{font-size:12px;font-weight:300;color:rgba(242,241,238,0.58);line-height:1.5;margin-bottom:10px;transition:color 0.2s}
+.task-card:hover:not(.done) .task-title{color:rgba(242,241,238,0.82)}
+.task-card.done .task-title{text-decoration:line-through;color:rgba(242,241,238,0.2)}
+.gen-box{display:none;background:rgba(0,0,0,0.3);border:1px solid rgba(232,201,125,0.1);padding:11px;margin-bottom:9px;animation:fadeUp 0.2s ease both}
+.gen-box.visible{display:block}
+.gen-lbl{font-family:var(--mono);font-size:8px;color:rgba(232,201,125,0.45);text-transform:uppercase;letter-spacing:0.1em;margin-bottom:5px}
+.gen-hook{font-family:var(--serif);font-size:13px;font-style:italic;color:rgba(242,241,238,0.58);line-height:1.5;margin-bottom:5px}
+.gen-body{font-size:11px;color:rgba(242,241,238,0.28);line-height:1.6;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;margin-bottom:5px}
+.gen-tip{font-family:var(--mono);font-size:9px;color:rgba(232,201,125,0.45)}
+.gen-btn{width:100%;padding:7px 0;border:1px solid rgba(232,201,125,0.18);background:transparent;color:rgba(232,201,125,0.55);font-family:var(--mono);font-size:9px;font-weight:300;letter-spacing:0.1em;text-transform:uppercase;cursor:pointer;transition:all 0.2s}
+.gen-btn:hover:not(:disabled){border-color:var(--blade);color:var(--blade);background:var(--blade-dim)}
+.gen-btn:disabled{opacity:0.22;cursor:not-allowed}
+
+.center-col{padding:18px 26px;display:flex;flex-direction:column;gap:10px;animation:fadeUp 0.5s ease 0.05s both}
+.mission-card{position:relative;overflow:hidden;background:linear-gradient(140deg,rgba(232,201,125,0.05) 0%,rgba(5,5,10,0.98) 50%,rgba(232,201,125,0.02) 100%);border:1px solid rgba(232,201,125,0.12);padding:30px 34px;flex:1;transition:border-color 0.3s}
+.mission-card:hover{border-color:rgba(232,201,125,0.2)}
+.m-glow{position:absolute;top:-50px;left:50%;transform:translateX(-50%);width:380px;height:180px;background:radial-gradient(ellipse,rgba(232,201,125,0.06) 0%,transparent 70%);pointer-events:none}
+.m-inner{position:relative;z-index:1}
+.m-eyebrow{display:flex;align-items:center;gap:8px;margin-bottom:18px}
+.m-eyebrow-txt{font-family:var(--mono);font-size:9px;font-weight:300;color:rgba(232,201,125,0.4);text-transform:uppercase;letter-spacing:0.16em}
+.m-dot{width:3px;height:3px;border-radius:50%;background:rgba(232,201,125,0.3)}
+.m-day{font-family:var(--mono);font-size:9px;color:rgba(242,241,238,0.12)}
+.m-title{font-family:var(--serif);font-size:clamp(26px,3vw,38px);font-weight:300;line-height:1.0;letter-spacing:-0.01em;margin-bottom:12px}
+.m-title em{font-style:italic;color:var(--blade);display:block}
+.m-title strong{font-weight:600}
+.m-blade{display:block;height:1px;background:var(--blade);opacity:0.25;margin-bottom:12px;max-width:36px}
+.m-desc{font-size:13px;color:var(--off);font-weight:300;line-height:1.8;max-width:460px;margin-bottom:22px}
+.m-stats{display:flex;gap:8px;margin-bottom:24px;flex-wrap:wrap}
+.m-stat{flex:1;min-width:100px;background:rgba(0,0,0,0.3);border:1px solid var(--border);padding:9px 12px}
+.m-stat-lbl{font-family:var(--mono);font-size:8px;font-weight:300;color:rgba(242,241,238,0.2);text-transform:uppercase;letter-spacing:0.1em;margin-bottom:4px}
+.m-stat-val{font-family:var(--serif);font-size:14px;font-weight:500}
+.c-blade{color:var(--blade)}.c-green{color:var(--green)}.c-off{color:var(--off)}
+.execute-btn{display:inline-flex;align-items:center;gap:10px;padding:12px 28px;border:1px solid var(--blade);background:transparent;color:var(--blade);font-family:var(--mono);font-size:10px;font-weight:400;letter-spacing:0.12em;text-transform:uppercase;cursor:pointer;transition:all 0.25s}
+.execute-btn:hover{background:var(--blade);color:#000;box-shadow:0 4px 20px rgba(232,201,125,0.2)}
+.execute-btn.loading{border-color:rgba(232,201,125,0.2);color:rgba(232,201,125,0.3);cursor:wait}
+.execute-btn.done{background:rgba(126,203,155,0.08);border-color:rgba(126,203,155,0.22);color:var(--green);cursor:default}
+.execute-btn.done:hover{background:rgba(126,203,155,0.08);color:var(--green);box-shadow:none}
+
+.week-strip{background:rgba(255,255,255,0.02);border:1px solid var(--border);padding:12px 14px}
+.week-days{display:flex;gap:4px;margin-top:8px}
+.w-day{flex:1;border:1px solid var(--border);padding:6px 4px;display:flex;flex-direction:column;align-items:center;gap:4px;transition:border-color 0.2s}
+.w-day:hover{border-color:rgba(232,201,125,0.18)}
+.w-day.past{border-color:rgba(232,201,125,0.14);background:rgba(232,201,125,0.03)}
+.w-day.today{border-color:rgba(232,201,125,0.38);background:rgba(232,201,125,0.06)}
+.w-day-lbl{font-family:var(--mono);font-size:7px;color:rgba(242,241,238,0.18);text-transform:uppercase}
+.w-dot{width:4px;height:4px;border-radius:50%;background:rgba(255,255,255,0.07)}
+.w-day.past .w-dot{background:var(--green);opacity:0.65}
+.w-day.today .w-dot{background:var(--blade)}
+
+.metrics-col{border-left:1px solid var(--border);padding:18px;display:flex;flex-direction:column;gap:7px;animation:fadeUp 0.5s ease 0.2s both}
+.metric-card{background:transparent;border:1px solid var(--border);padding:13px 14px;transition:border-color 0.2s,background 0.2s}
+.metric-card:hover{border-color:rgba(232,201,125,0.14);background:rgba(232,201,125,0.02)}
+.metric-top{display:flex;align-items:center;justify-content:space-between;margin-bottom:6px}
+.metric-lbl{font-family:var(--mono);font-size:8px;font-weight:300;text-transform:uppercase;letter-spacing:0.1em;color:rgba(242,241,238,0.2)}
+.metric-trend{font-family:var(--mono);font-size:9px;font-weight:300;padding:1px 5px;letter-spacing:0.04em}
+.trend-up{color:var(--green);background:rgba(126,203,155,0.07);border:1px solid rgba(126,203,155,0.14)}
+.trend-down{color:var(--red)}
+.metric-val{font-family:var(--serif);font-size:24px;font-weight:500;letter-spacing:-0.01em;line-height:1;color:var(--white)}
+.metric-card:hover .metric-val{color:var(--blade)}
+.log-btn{width:100%;padding:10px 0;border:1px solid var(--border);background:transparent;color:rgba(242,241,238,0.18);font-family:var(--mono);font-size:9px;font-weight:300;letter-spacing:0.1em;text-transform:uppercase;cursor:pointer;transition:all 0.2s;margin-top:2px}
+.log-btn:hover{border-color:rgba(232,201,125,0.18);color:var(--blade)}
+
+.insight-bar{display:flex;align-items:center;gap:12px;padding:10px 40px;border-top:1px solid rgba(255,255,255,0.04);background:var(--bg);position:sticky;bottom:0;z-index:100}
+.insight-mark{font-family:var(--serif);font-size:13px;color:rgba(232,201,125,0.35);flex-shrink:0}
+.insight-lbl{font-family:var(--mono);font-size:9px;font-weight:300;color:rgba(232,201,125,0.3);text-transform:uppercase;letter-spacing:0.12em;white-space:nowrap}
+.insight-div{width:1px;height:12px;background:var(--border2);flex-shrink:0}
+.insight-txt{font-size:12px;color:rgba(242,241,238,0.3);font-weight:300;flex:1;line-height:1.5}
+.insight-txt strong{color:rgba(242,241,238,0.62);font-weight:500}
+.insight-btn{margin-left:auto;background:none;border:none;font-family:var(--mono);font-size:14px;color:rgba(242,241,238,0.14);cursor:pointer;transition:color 0.2s,transform 0.3s;flex-shrink:0}
+.insight-btn:hover{color:var(--blade);transform:rotate(180deg)}
+
+@media(max-width:900px){
+  .db-main{grid-template-columns:1fr 1fr}
+  .center-col{grid-column:1/-1;grid-row:1;border-bottom:1px solid var(--border)}
+  .tasks-col{grid-column:1;grid-row:2;border-right:1px solid var(--border)}
+  .metrics-col{grid-column:2;grid-row:2}
+  .tasks-scroll{max-height:420px}
+}
+@media(max-width:600px){
+  .ob-nav{padding:14px 20px}
+  .ob-hero{padding:36px 20px 28px}
+  .ob-form-wrap{padding:0 20px 60px}
+  .ob-card{padding:22px 18px}
+  .ob-grid{grid-template-columns:1fr}
+  .stage-grid{grid-template-columns:1fr 1fr}
+  .topbar,.prog-row{padding-left:16px;padding-right:16px}
+  .db-main{grid-template-columns:1fr;padding-bottom:80px}
+  .center-col{grid-row:1;padding:14px 18px}
+  .tasks-col{grid-row:2;border-right:none;border-top:1px solid var(--border);padding:14px 18px}
+  .metrics-col{grid-row:3;border-left:none;border-top:1px solid var(--border);padding:14px 18px;display:grid;grid-template-columns:1fr 1fr;gap:7px}
+  .metrics-col .panel-lbl{grid-column:1/-1}
+  .log-btn{grid-column:1/-1}
+  .tasks-scroll{max-height:unset;overflow-y:visible}
+  .m-stats{flex-direction:column}
+  .insight-bar{padding:10px 16px}
+  .insight-lbl,.insight-div{display:none}
+  .tb-badge{display:none}
+}
+</style>
+</head>
+<body>
+
+<!-- SCREEN 1 — ONBOARDING -->
+<div id="screen-onboard" class="screen active">
+  <div class="ob-nav">
+    <div class="ob-wordmark">Rayse<em>OS</em></div>
+    <div class="ob-tagline">Fundraising Execution System</div>
+  </div>
+  <div class="ob-hero">
+    <div class="ob-eyebrow">AI-Powered · 30-Day System</div>
+    <div class="ob-title">Turn Attention<br><strong>Into</strong><em>Capital.</em></div>
+    <span class="ob-blade"></span>
+    <p class="ob-sub">Tell us about your startup. We generate a 30-day execution plan that builds traction, creates investor-ready signals, and tells you exactly what to do every day.</p>
+  </div>
+  <div class="ob-steps" id="stepIndicator">
+    <div class="ob-step active" id="stepDot1"><div class="ob-step-circle">1</div><div class="ob-step-lbl">Startup</div></div>
+    <div class="ob-step-line"></div>
+    <div class="ob-step" id="stepDot2"><div class="ob-step-circle">2</div><div class="ob-step-lbl">Audience</div></div>
+    <div class="ob-step-line"></div>
+    <div class="ob-step" id="stepDot3"><div class="ob-step-circle">3</div><div class="ob-step-lbl">Funding</div></div>
+  </div>
+  <div class="ob-form-wrap">
+    <div class="ob-panel active" id="panel1">
+      <div class="ob-card">
+        <div class="ob-card-title">Your <em>Startup</em></div>
+        <div class="ob-card-sub">Start with the basics. What are you building and what problem does it solve?</div>
+        <div class="ob-grid">
+          <div class="ob-field"><label class="ob-label">Startup Name *</label><input class="ob-input" id="f-name" placeholder="e.g. Aegis Protocol"/></div>
+          <div class="ob-field"><label class="ob-label">Industry *</label>
+            <select class="ob-select" id="f-industry">
+              <option value="">Select category...</option>
+              <option>DeFi / Web3</option><option>B2B SaaS</option><option>Fintech / Payments</option>
+              <option>AI / Developer Tooling</option><option>E-commerce / Logistics</option>
+              <option>Consumer App</option><option>HealthTech</option><option>EdTech</option>
+              <option>Creator Economy</option><option>Infrastructure / DevOps</option>
+            </select>
+          </div>
+          <div class="ob-field span2"><label class="ob-label">One-line pitch *</label><input class="ob-input" id="f-oneliner" placeholder="What problem do you solve, for whom?"/></div>
+          <div class="ob-field span2"><label class="ob-label">Describe your product *</label><textarea class="ob-textarea" id="f-desc" placeholder="What it does, what makes it unique, who your ideal customers are..."></textarea></div>
+        </div>
+        <div class="ob-error" id="err1">Please fill in all required fields.</div>
+      </div>
+      <div class="ob-nav-row"><div></div><button class="ob-next-btn" onclick="nextStep(1)">Continue →</button></div>
+    </div>
+    <div class="ob-panel" id="panel2">
+      <div class="ob-card">
+        <div class="ob-card-title">Your <em>Audience & Stage</em></div>
+        <div class="ob-card-sub">Who are you building for, and where are you today?</div>
+        <div class="ob-grid">
+          <div class="ob-field span2"><label class="ob-label">Target Audience *</label><input class="ob-input" id="f-audience" placeholder="e.g. DeFi developers, Nigerian SME owners, B2B SaaS founders"/></div>
+          <div class="ob-field span2"><label class="ob-label">Startup Stage *</label>
+            <div class="stage-grid" id="stageGrid">
+              <div class="stage-opt active" data-stage="idea"><span class="stage-icon">💡</span><div class="stage-name">Idea</div><div class="stage-desc">Pre-product</div></div>
+              <div class="stage-opt" data-stage="mvp"><span class="stage-icon">🔧</span><div class="stage-name">MVP</div><div class="stage-desc">Built, not live</div></div>
+              <div class="stage-opt" data-stage="launched"><span class="stage-icon">🚀</span><div class="stage-name">Launched</div><div class="stage-desc">Live with users</div></div>
+              <div class="stage-opt" data-stage="traction"><span class="stage-icon">📈</span><div class="stage-name">Traction</div><div class="stage-desc">Need to scale</div></div>
+            </div>
+          </div>
+          <div class="ob-field span2"><label class="ob-label">Platforms to build on *</label>
+            <div class="chip-wrap" id="platformChips">
+              <div class="chip active" data-p="Twitter/X">𝕏 Twitter/X</div>
+              <div class="chip active" data-p="LinkedIn">LinkedIn</div>
+              <div class="chip" data-p="TikTok">TikTok</div>
+              <div class="chip" data-p="Instagram">Instagram</div>
+              <div class="chip" data-p="YouTube Shorts">YouTube</div>
+              <div class="chip" data-p="Reddit">Reddit</div>
+              <div class="chip" data-p="Product Hunt">Product Hunt</div>
+            </div>
+          </div>
+        </div>
+        <div class="ob-error" id="err2">Please fill in audience and select at least one platform.</div>
+      </div>
+      <div class="ob-nav-row"><button class="ob-back-btn" onclick="prevStep(2)">← Back</button><button class="ob-next-btn" onclick="nextStep(2)">Continue →</button></div>
+    </div>
+    <div class="ob-panel" id="panel3">
+      <div class="ob-card">
+        <div class="ob-card-title">Your <em>Funding Goal</em></div>
+        <div class="ob-card-sub">Final details to personalise your execution plan.</div>
+        <div class="ob-grid">
+          <div class="ob-field span2"><label class="ob-label">Funding Goal</label><div class="slider-row"><input type="range" id="f-slider" min="50000" max="5000000" step="50000" value="500000" oninput="updateSlider()"/><div class="slider-val" id="f-sliderval">$500K</div></div></div>
+          <div class="ob-field"><label class="ob-label">Funding Type</label>
+            <select class="ob-select" id="f-fundtype"><option>Pre-seed</option><option>Seed</option><option>Series A</option><option>Angel / Friends & Family</option><option>Grant / Accelerator</option></select>
+          </div>
+          <div class="ob-field"><label class="ob-label">Founder Background (optional)</label><input class="ob-input" id="f-founder" placeholder="e.g. Ex-Google, 5yr fintech, solo founder"/></div>
+          <div class="ob-field span2"><label class="ob-label">Unique Differentiator (optional)</label><textarea class="ob-textarea" id="f-diff" placeholder="What makes your approach different? Any unfair advantage?" style="min-height:60px"></textarea></div>
+        </div>
+      </div>
+      <div class="ob-nav-row"><button class="ob-back-btn" onclick="prevStep(3)">← Back</button><button class="ob-next-btn" onclick="generatePlan()" id="generateBtn">Generate My Plan →</button></div>
+    </div>
+  </div>
+</div>
+
+<!-- SCREEN 2 — GENERATING -->
+<div id="screen-generating" class="screen">
+  <div class="gen-ring"></div>
+  <div class="gen-title">Building Your <em>30-Day Plan</em></div>
+  <div class="gen-steps" id="genSteps"></div>
+</div>
+
+<!-- SCREEN 3 — COMMAND CENTER -->
+<div id="screen-dashboard" class="screen">
+  <div class="topbar">
+    <div class="tb-left">
+      <div class="tb-wordmark">Rayse<em>OS</em></div>
+      <div class="tb-divider"></div>
+      <span class="tb-startup" id="db-startupName">—</span>
+      <span class="tb-badge" id="db-stage">—</span>
+    </div>
+    <div class="tb-score">
+      <div class="tb-score-row"><span class="tb-score-num" id="db-score">0</span><span class="tb-score-denom">/100</span><span class="tb-score-delta">+4 today</span></div>
+      <span class="tb-score-lbl">Investor Signal Score</span>
+    </div>
+    <div class="tb-right">
+      <div style="text-align:right"><div class="tb-streak-val">1</div><div class="tb-streak-lbl">Day Streak</div></div>
+      <div class="tb-avatar" id="db-avatar">M</div>
+    </div>
+  </div>
+  <div class="prog-row">
+    <span class="prog-lbl">Day 1 of 30</span>
+    <div class="prog-track"><div class="prog-fill" style="width:3.3%"></div></div>
+    <span class="prog-lbl" id="db-taskprog">0 / 5 done</span>
+  </div>
+  <div class="db-main">
+    <div class="tasks-col">
+      <div class="panel-lbl"><span>Today's Tasks</span><span id="db-taskcnt">0/5</span></div>
+      <div class="tasks-scroll" id="db-taskList"></div>
+    </div>
+    <div class="center-col">
+      <div class="panel-lbl"><span>Command Center</span><span id="db-date"></span></div>
+      <div class="mission-card">
+        <div class="m-glow"></div>
+        <div class="m-inner">
+          <div class="m-eyebrow"><span class="m-eyebrow-txt">Today's Mission</span><span class="m-dot"></span><span class="m-day">Day 1</span></div>
+          <div class="m-title" id="db-missionTitle">—<br><em id="db-missionAccent">—</em></div>
+          <span class="m-blade"></span>
+          <p class="m-desc" id="db-missionDesc">—</p>
+          <div class="m-stats">
+            <div class="m-stat"><div class="m-stat-lbl">Expected Outcome</div><div class="m-stat-val c-green" id="db-outcome">—</div></div>
+            <div class="m-stat"><div class="m-stat-lbl">Primary Platform</div><div class="m-stat-val c-blade" id="db-platform">—</div></div>
+            <div class="m-stat"><div class="m-stat-lbl">Time Required</div><div class="m-stat-val c-off">~2 hours</div></div>
+          </div>
+          <button class="execute-btn" id="executeBtn" onclick="handleExecute()"><span id="executeBtnTxt">Start Execution →</span></button>
+        </div>
+      </div>
+      <div class="week-strip">
+        <div class="panel-lbl" style="margin-bottom:0"><span id="db-weekTheme">Week 1</span></div>
+        <div class="week-days">
+          <div class="w-day today"><span class="w-day-lbl">M</span><span class="w-dot"></span></div>
+          <div class="w-day"><span class="w-day-lbl">T</span><span class="w-dot"></span></div>
+          <div class="w-day"><span class="w-day-lbl">W</span><span class="w-dot"></span></div>
+          <div class="w-day"><span class="w-day-lbl">T</span><span class="w-dot"></span></div>
+          <div class="w-day"><span class="w-day-lbl">F</span><span class="w-dot"></span></div>
+          <div class="w-day"><span class="w-day-lbl">S</span><span class="w-dot"></span></div>
+          <div class="w-day"><span class="w-day-lbl">S</span><span class="w-dot"></span></div>
+        </div>
+      </div>
+    </div>
+    <div class="metrics-col">
+      <div class="panel-lbl"><span>Traction Signals</span></div>
+      <div class="metric-card"><div class="metric-top"><span class="metric-lbl">Followers</span><span class="metric-trend trend-up">+0</span></div><div class="metric-val">0</div></div>
+      <div class="metric-card"><div class="metric-top"><span class="metric-lbl">Waitlist</span><span class="metric-trend trend-up">+0</span></div><div class="metric-val">0</div></div>
+      <div class="metric-card"><div class="metric-top"><span class="metric-lbl">Investor Signals</span><span class="metric-trend trend-up">+0</span></div><div class="metric-val">0</div></div>
+      <button class="log-btn" onclick="logMetrics(this)">+ Log Today's Metrics</button>
+    </div>
+  </div>
+  <div class="insight-bar">
+    <span class="insight-mark">✦</span>
+    <span class="insight-lbl">AI Insight</span>
+    <div class="insight-div"></div>
+    <p class="insight-txt" id="db-insight">Generating your first insight...</p>
+    <button class="insight-btn" onclick="cycleInsight()">↻</button>
+  </div>
+</div>
+
+<script>
+let currentStep=1,founderData={},planData=null,taskState={},insightIdx=0,insights=[];
+const FREE_PLAN_LIMIT=1,FREE_CONTENT_LIMIT=3;
+let plansUsed=parseInt(localStorage.getItem('rayseos_plans_used')||'0');
+let contentUsed=parseInt(localStorage.getItem('rayseos_content_used')||'0');
+
+function showStep(n){
+  document.querySelectorAll('.ob-panel').forEach(p=>p.classList.remove('active'));
+  document.getElementById('panel'+n).classList.add('active');
+  document.querySelectorAll('.ob-step').forEach((s,i)=>{
+    s.classList.remove('active','done');
+    if(i+1<n)s.classList.add('done');
+    if(i+1===n)s.classList.add('active');
+  });
+  currentStep=n;
+}
+function nextStep(n){
+  if(n===1){
+    const name=document.getElementById('f-name').value.trim(),ind=document.getElementById('f-industry').value,ol=document.getElementById('f-oneliner').value.trim(),desc=document.getElementById('f-desc').value.trim();
+    if(!name||!ind||!ol||!desc){document.getElementById('err1').classList.add('visible');return}
+    document.getElementById('err1').classList.remove('visible');
+  }
+  if(n===2){
+    const aud=document.getElementById('f-audience').value.trim(),plat=[...document.querySelectorAll('.chip.active')].map(c=>c.dataset.p);
+    if(!aud||plat.length===0){document.getElementById('err2').classList.add('visible');return}
+    document.getElementById('err2').classList.remove('visible');
+  }
+  showStep(n+1);
+}
+function prevStep(n){showStep(n-1)}
+document.getElementById('stageGrid').addEventListener('click',e=>{const opt=e.target.closest('.stage-opt');if(!opt)return;document.querySelectorAll('.stage-opt').forEach(o=>o.classList.remove('active'));opt.classList.add('active')});
+document.getElementById('platformChips').addEventListener('click',e=>{const chip=e.target.closest('.chip');if(chip)chip.classList.toggle('active')});
+function updateSlider(){const v=parseInt(document.getElementById('f-slider').value);document.getElementById('f-sliderval').textContent=v>=1000000?'$'+(v/1000000).toFixed(1)+'M':'$'+(v/1000).toFixed(0)+'K'}
+
+async function generatePlan(){
+  if(plansUsed>=FREE_PLAN_LIMIT){window.location.href='upgrade.html';return}
+  const btn=document.getElementById('generateBtn');btn.disabled=true;btn.textContent='Generating...';
+  founderData={name:document.getElementById('f-name').value.trim(),industry:document.getElementById('f-industry').value,oneliner:document.getElementById('f-oneliner').value.trim(),desc:document.getElementById('f-desc').value.trim(),audience:document.getElementById('f-audience').value.trim(),stage:document.querySelector('.stage-opt.active')?.dataset.stage||'mvp',platforms:[...document.querySelectorAll('.chip.active')].map(c=>c.dataset.p),funding:document.getElementById('f-sliderval').textContent,fundtype:document.getElementById('f-fundtype').value,founder:document.getElementById('f-founder').value.trim(),diff:document.getElementById('f-diff').value.trim()};
+  showScreen('generating');startLoadingSteps();
+  const prompt=`You are a world-class startup distribution strategist. Generate a personalized 30-day fundraising execution plan.\n\nSTARTUP:\n- Name: ${founderData.name}\n- Industry: ${founderData.industry}\n- Pitch: ${founderData.oneliner}\n- Description: ${founderData.desc}\n- Audience: ${founderData.audience}\n- Stage: ${founderData.stage}\n- Platforms: ${founderData.platforms.join(', ')}\n- Funding Goal: ${founderData.funding} ${founderData.fundtype}\n${founderData.founder?`- Founder: ${founderData.founder}`:''}\n${founderData.diff?`- Differentiator: ${founderData.diff}`:''}\n\nRespond ONLY with valid JSON:\n{"missionTitle":"two-word first part","missionAccent":"two-word italic part","missionDesc":"2-sentence explanation","expectedOutcome":"specific outcome","primaryPlatform":"1-2 platforms","weekTheme":"Week 1 — [Theme]","signalScore":24,"tasks":[{"platform":"X","title":"specific task","hook":"exact opening line","content":"2-3 sentence brief","tip":"one execution tip"}],"insights":["Insight 1 with <strong>bolded action</strong>","Insight 2 with <strong>bolded action</strong>","Insight 3 with <strong>bolded action</strong>"]}\nMake exactly 5 tasks specific to this startup. Signal score: idea=15-25, mvp=25-40, launched=40-60, traction=60-80.`;
+  try{
+    const res=await fetch('/api/chat',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({model:'claude-sonnet-4-20250514',max_tokens:2000,messages:[{role:'user',content:prompt}]})});
+    const data=await res.json();
+    const raw=data.content.map(b=>b.text||'').join('');
+    planData=JSON.parse(raw.replace(/```json|```/g,'').trim());
+    plansUsed++;localStorage.setItem('rayseos_plans_used',plansUsed);
+    setTimeout(()=>populateDashboard(),400);
+  }catch(e){
+    console.error(e);
+    planData={missionTitle:"Establish Your",missionAccent:"Founder Narrative",missionDesc:"Investors fund people before products. Today you build the story that makes them want to fund you.",expectedOutcome:"+30 new followers",primaryPlatform:founderData.platforms[0]||"Twitter/X",weekTheme:"Week 1 — Narrative Foundation",signalScore:22,tasks:[{platform:"X",title:"Post your founder origin story thread",hook:"I almost didn't build this.",content:"Share why you started. Make it personal.",tip:"End with a question."},{platform:"LinkedIn",title:"Publish problem validation post",hook:"Nobody talks about this openly.",content:"Describe the pain point. Use data.",tip:"Tag 3 people in your audience."},{platform:"Growth",title:"DM 10 potential early users",hook:"Hey, building something for your problem",content:"Reach out personally. Ask for feedback only.",tip:"Don't pitch."},{platform:"X",title:"Share one insight from your research",hook:"After talking to 20 founders, here's what I found:",content:"One sharp observation. No product mention.",tip:"Use numbered list format."},{platform:"LinkedIn",title:"Connect with 20 target investors",hook:"",content:"Find pre-seed investors active in your space.",tip:"Comment on their posts first."}],insights:[`<strong>Post your founder story today</strong> — highest-leverage action in Week 1.`,`Founders posting consistently for 7 days see <strong>3× more investor profile visits</strong>.`,`<strong>Engagement over followers</strong> — 100 engaged followers beats 10,000 passive ones.`]};
+    setTimeout(()=>populateDashboard(),400);
+  }
+  btn.disabled=false;btn.textContent='Generate My Plan →';
+}
+
+const loadingLines=['→ Analysing your market positioning...','→ Mapping platform-audience fit...','→ Crafting content angles...','→ Sequencing investor signals...','→ Building day-by-day calendar...','→ Finalising your execution plan...'];
+function startLoadingSteps(){const el=document.getElementById('genSteps');el.innerHTML='';loadingLines.forEach((line,i)=>{const div=document.createElement('div');div.className='gen-step';div.textContent=line;div.style.animationDelay=(i*0.9)+'s';el.appendChild(div)})}
+
+function populateDashboard(){
+  const d=planData,f=founderData;
+  document.getElementById('db-startupName').textContent=f.name;
+  document.getElementById('db-stage').textContent=f.fundtype;
+  document.getElementById('db-score').textContent=d.signalScore;
+  document.getElementById('db-avatar').textContent=f.name.charAt(0).toUpperCase();
+  const now=new Date();
+  document.getElementById('db-date').textContent=now.toLocaleDateString('en-US',{weekday:'long',month:'short',day:'numeric'});
+  document.getElementById('db-missionTitle').childNodes[0].textContent=d.missionTitle+'\n';
+  document.getElementById('db-missionAccent').textContent=d.missionAccent;
+  document.getElementById('db-missionDesc').textContent=d.missionDesc;
+  document.getElementById('db-outcome').textContent=d.expectedOutcome;
+  document.getElementById('db-platform').textContent=d.primaryPlatform;
+  document.getElementById('db-weekTheme').textContent=d.weekTheme;
+  insights=d.insights||[];
+  if(insights.length>0)document.getElementById('db-insight').innerHTML=insights[0];
+  taskState={};
+  const list=document.getElementById('db-taskList');list.innerHTML='';
+  (d.tasks||[]).forEach((task,i)=>{
+    const id=i+1;taskState[id]=false;
+    const ptag=getPtag(task.platform);
+    list.innerHTML+=`<div class="task-card" id="task${id}"><div class="task-top"><span class="ptag ${ptag}">${task.platform}</span><button class="check-btn" onclick="toggleTask(${id})"><span class="checkmark">✓</span></button></div><div class="task-title">${task.title}</div><div class="gen-box" id="gen${id}"></div><button class="gen-btn" id="genbtn${id}" onclick="generateContent(${id},'${task.platform.replace(/'/g,"\\'")}','${task.title.replace(/'/g,"\\'")}','${(task.hook||'').replace(/'/g,"\\'")}','${(task.content||'').replace(/'/g,"\\'")}')">Generate Content</button></div>`;
+  });
+  updateTaskCount();showScreen('dashboard');
+}
+
+function getPtag(p){p=p.toLowerCase();if(p.includes('tiktok'))return'ptag-tiktok';if(p.includes('x')||p.includes('twitter'))return'ptag-x';if(p.includes('linkedin'))return'ptag-linkedin';if(p.includes('instagram'))return'ptag-instagram';if(p.includes('reddit'))return'ptag-reddit';return'ptag-growth'}
+
+function toggleTask(id){taskState[id]=!taskState[id];const card=document.getElementById('task'+id),btn=card.querySelector('.check-btn');card.classList.toggle('done',taskState[id]);btn.classList.toggle('checked',taskState[id]);updateTaskCount()}
+function updateTaskCount(){const done=Object.values(taskState).filter(Boolean).length,total=Object.keys(taskState).length;document.getElementById('db-taskcnt').textContent=done+'/'+total;document.getElementById('db-taskprog').textContent=done+' / '+total+' done'}
+
+async function generateContent(id,platform,title,hint_hook,hint_body){
+  if(contentUsed>=FREE_CONTENT_LIMIT){window.location.href='upgrade.html';return}
+  const btn=document.getElementById('genbtn'+id),box=document.getElementById('gen'+id);
+  btn.disabled=true;btn.textContent='Generating...';
+  try{
+    const res=await fetch('/api/chat',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({model:'claude-sonnet-4-20250514',max_tokens:800,messages:[{role:'user',content:`Generate ready-to-use content for a startup founder.\n\nPlatform: ${platform}\nTask: ${title}\nStartup: ${founderData.name} — ${founderData.oneliner}\nIndustry: ${founderData.industry}\nAudience: ${founderData.audience}\n${hint_hook?`Suggested hook: ${hint_hook}`:''}\n${hint_body?`Direction: ${hint_body}`:''}\n\nRespond ONLY with valid JSON:\n{"hook":"exact opening line","content":"full post/script","cta":"one CTA","tip":"one execution tip"}`}]})});
+    const data=await res.json();
+    const raw=data.content.map(b=>b.text||'').join('');
+    const json=JSON.parse(raw.replace(/```json|```/g,'').trim());
+    box.innerHTML=`<div class="gen-lbl">Hook</div><div class="gen-hook">"${json.hook}"</div><div class="gen-body">${json.content}</div>${json.tip?`<div class="gen-tip">— ${json.tip}</div>`:''}`;
+    box.classList.add('visible');btn.textContent='Regenerate';
+    contentUsed++;localStorage.setItem('rayseos_content_used',contentUsed);
+  }catch(e){
+    box.innerHTML=`<div class="gen-hook" style="color:var(--red)">Generation failed — try again.</div>`;
+    box.classList.add('visible');btn.textContent='Retry';
+  }
+  btn.disabled=false;
+}
+
+function handleExecute(){const btn=document.getElementById('executeBtn'),txt=document.getElementById('executeBtnTxt');if(btn.classList.contains('done')||btn.classList.contains('loading'))return;btn.classList.add('loading');txt.textContent='Preparing...';setTimeout(()=>{btn.classList.remove('loading');btn.classList.add('done');txt.textContent='✓ Execution Started';},1500)}
+function cycleInsight(){if(!insights.length)return;insightIdx=(insightIdx+1)%insights.length;const el=document.getElementById('db-insight');el.style.opacity='0';el.style.transition='opacity 0.2s';setTimeout(()=>{el.innerHTML=insights[insightIdx];el.style.opacity='1';},200)}
+function logMetrics(btn){btn.textContent='✓ Logged';btn.style.color='var(--green)';btn.style.borderColor='rgba(126,203,155,0.2)';setTimeout(()=>{btn.textContent='+ Log Today\'s Metrics';btn.style.color='';btn.style.borderColor='';},2000)}
+function showScreen(name){document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));const map={onboard:'screen-onboard',generating:'screen-generating',dashboard:'screen-dashboard'};document.getElementById(map[name]).classList.add('active')}
+</script>
+</body>
+</html>

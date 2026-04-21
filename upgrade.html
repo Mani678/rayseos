@@ -1,0 +1,490 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="theme-color" content="#05050A">
+<meta name="robots" content="noindex">
+<title>RayseOS — Upgrade Your Plan</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;0,700;1,300;1,400&family=Outfit:wght@200;300;400;500;600&family=DM+Mono:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#05050A;--bg2:#07070D;--surface:#0A0A12;--surface2:#0E0E18;
+  --border:rgba(255,255,255,0.05);--border2:rgba(255,255,255,0.09);
+  --white:#F2F1EE;--off:rgba(242,241,238,0.55);--faint:rgba(242,241,238,0.22);
+  --dimmed:rgba(242,241,238,0.07);
+  --blade:#E8C97D;--blade-dim:rgba(232,201,125,0.09);--blade-lt:#F0D99A;
+  --green:#7ecb9b;--red:#c97d7d;
+  --serif:'Cormorant Garamond',Georgia,serif;
+  --sans:'Outfit',-apple-system,sans-serif;
+  --mono:'DM Mono',monospace;
+}
+html{-webkit-text-size-adjust:100%}
+body{background:var(--bg);color:var(--white);font-family:var(--sans);font-size:15px;line-height:1.6;font-weight:300;min-height:100vh;overflow-x:hidden;-webkit-font-smoothing:antialiased}
+body::before{content:'';position:fixed;inset:0;background:radial-gradient(ellipse at 50% 0%,rgba(232,201,125,0.05) 0%,transparent 55%);pointer-events:none;z-index:0}
+body::after{content:'';position:fixed;inset:0;background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 512 512' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='g'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23g)' opacity='0.04'/%3E%3C/svg%3E");pointer-events:none;z-index:1;opacity:0.5}
+nav,main,footer{position:relative;z-index:2}
+
+@keyframes fadeUp{from{opacity:0;transform:translateY(18px)}to{opacity:1;transform:translateY(0)}}
+@keyframes fadeIn{from{opacity:0}to{opacity:1}}
+@keyframes bladeIn{from{width:0}to{width:48px}}
+@keyframes pulse{0%,100%{opacity:0.5}50%{opacity:1}}
+
+/* NAV */
+nav{
+  display:flex;align-items:center;justify-content:space-between;
+  padding:20px 56px;border-bottom:1px solid var(--border);
+  background:rgba(5,5,10,0.96);backdrop-filter:blur(20px);
+  -webkit-backdrop-filter:blur(20px);
+  position:sticky;top:0;z-index:100;
+}
+.nav-wordmark{font-family:var(--serif);font-size:20px;font-weight:500;letter-spacing:0.04em;color:var(--white);text-decoration:none}
+.nav-wordmark em{font-style:normal;color:var(--blade)}
+.nav-back{font-family:var(--mono);font-size:11px;font-weight:300;color:var(--faint);text-decoration:none;letter-spacing:0.08em;text-transform:uppercase;transition:color 0.25s;display:flex;align-items:center;gap:8px;-webkit-tap-highlight-color:transparent}
+.nav-back::before{content:'←'}
+.nav-back:hover{color:var(--white)}
+
+/* HERO */
+.upgrade-hero{
+  text-align:center;
+  padding:72px 40px 56px;
+  animation:fadeUp 0.6s ease both;
+  max-width:640px;
+  margin:0 auto;
+}
+.hero-kicker{
+  font-family:var(--mono);font-size:10px;font-weight:300;
+  color:var(--blade);text-transform:uppercase;letter-spacing:0.18em;
+  margin-bottom:20px;display:flex;align-items:center;justify-content:center;gap:10px;
+}
+.hero-kicker::before,.hero-kicker::after{content:'';width:20px;height:1px;background:var(--blade);opacity:0.4}
+.hero-title{
+  font-family:var(--serif);
+  font-size:clamp(40px,6vw,64px);
+  font-weight:300;line-height:1.0;letter-spacing:-0.01em;
+  margin-bottom:16px;
+}
+.hero-title strong{font-weight:600}
+.hero-title em{font-style:italic;color:var(--blade)}
+.hero-blade{display:block;width:0;height:2px;background:var(--blade);margin:20px auto;animation:bladeIn 0.8s ease 0.4s forwards;opacity:0.6}
+.hero-desc{font-size:15px;color:var(--off);line-height:1.8;font-weight:300;max-width:480px;margin:0 auto}
+
+/* USAGE METER */
+.usage-section{
+  max-width:560px;margin:0 auto 56px;
+  padding:0 40px;
+  animation:fadeUp 0.6s ease 0.1s both;
+}
+.usage-card{
+  background:var(--surface);border:1px solid var(--border2);
+  padding:28px 32px;
+}
+.usage-label{
+  font-family:var(--mono);font-size:9px;font-weight:300;
+  color:var(--blade);text-transform:uppercase;letter-spacing:0.14em;
+  margin-bottom:20px;display:flex;align-items:center;gap:8px;
+}
+.usage-label::before{content:'//'}
+.usage-rows{display:flex;flex-direction:column;gap:14px}
+.usage-row{display:grid;grid-template-columns:1fr auto;align-items:center;gap:16px}
+.usage-row-left{}
+.usage-row-name{font-family:var(--mono);font-size:11px;color:var(--faint);text-transform:uppercase;letter-spacing:0.1em;margin-bottom:6px}
+.usage-track{height:2px;background:rgba(255,255,255,0.06);position:relative;overflow:hidden}
+.usage-fill{height:100%;background:var(--blade);transition:width 1s ease}
+.usage-fill.full{background:var(--red)}
+.usage-count{font-family:var(--serif);font-size:18px;font-weight:500;color:var(--white);text-align:right;white-space:nowrap}
+.usage-count.used{color:var(--red)}
+.usage-note{
+  margin-top:20px;padding-top:16px;border-top:1px solid var(--border);
+  font-family:var(--mono);font-size:10px;color:var(--faint);line-height:1.6;
+}
+.usage-note strong{color:var(--off)}
+
+/* PLANS */
+.plans-section{
+  max-width:960px;margin:0 auto;
+  padding:0 40px 96px;
+  animation:fadeUp 0.6s ease 0.2s both;
+}
+.plans-label{
+  font-family:var(--mono);font-size:10px;font-weight:300;
+  color:var(--blade);text-transform:uppercase;letter-spacing:0.16em;
+  margin-bottom:32px;display:flex;align-items:center;gap:10px;
+}
+.plans-label::before{content:'';width:20px;height:1px;background:var(--blade);opacity:0.4}
+
+.plans-grid{
+  display:grid;grid-template-columns:repeat(3,1fr);
+  gap:1px;background:var(--border);border:1px solid var(--border);
+}
+
+.plan-card{
+  background:var(--bg);
+  padding:36px 32px;
+  position:relative;
+  transition:background 0.3s;
+  display:flex;flex-direction:column;
+}
+.plan-card:hover{background:var(--surface)}
+.plan-card.featured{
+  background:var(--surface2);
+  border-top:2px solid var(--blade);
+}
+.plan-card.featured:hover{background:#111118}
+
+.plan-featured-badge{
+  position:absolute;top:-1px;left:50%;transform:translateX(-50%);
+  font-family:var(--mono);font-size:8px;color:#000;
+  background:var(--blade);padding:3px 12px;
+  text-transform:uppercase;letter-spacing:0.1em;font-weight:500;
+  white-space:nowrap;
+}
+
+.plan-tier{
+  font-family:var(--mono);font-size:9px;font-weight:300;
+  color:var(--blade);text-transform:uppercase;letter-spacing:0.16em;
+  margin-bottom:16px;
+}
+.plan-price-row{display:flex;align-items:baseline;gap:4px;margin-bottom:6px}
+.plan-price{
+  font-family:var(--serif);
+  font-size:52px;font-weight:600;line-height:1;letter-spacing:-0.02em;
+  color:var(--white);
+}
+.plan-price-free{
+  font-family:var(--serif);
+  font-size:52px;font-weight:300;line-height:1;letter-spacing:-0.02em;
+  color:rgba(242,241,238,0.4);
+}
+.plan-currency{font-family:var(--serif);font-size:22px;font-weight:300;color:var(--off);align-self:flex-start;padding-top:8px}
+.plan-period{font-family:var(--mono);font-size:10px;font-weight:300;color:var(--faint);text-transform:uppercase;letter-spacing:0.1em;margin-bottom:6px}
+.plan-desc{font-size:13px;color:var(--off);font-weight:300;line-height:1.6;margin-bottom:28px}
+
+.plan-blade{width:100%;height:1px;background:var(--border);margin-bottom:24px}
+
+.plan-features{display:flex;flex-direction:column;gap:10px;margin-bottom:32px;flex:1}
+.plan-feature{display:flex;align-items:flex-start;gap:10px;font-size:13px;color:var(--off);font-weight:300;line-height:1.5}
+.plan-feature::before{content:'';width:5px;height:5px;border-radius:50%;background:rgba(232,201,125,0.35);flex-shrink:0;margin-top:6px}
+.plan-feature.locked{color:rgba(242,241,238,0.18)}
+.plan-feature.locked::before{background:rgba(255,255,255,0.1)}
+.plan-feature strong{color:var(--white);font-weight:500}
+
+.plan-limit{
+  font-family:var(--mono);font-size:10px;color:rgba(201,125,125,0.6);
+  text-transform:uppercase;letter-spacing:0.08em;
+  margin-bottom:20px;display:flex;align-items:center;gap:6px;
+}
+.plan-limit::before{content:'';width:4px;height:4px;border-radius:50%;background:var(--red);flex-shrink:0}
+
+.plan-btn{
+  width:100%;padding:12px 0;
+  font-family:var(--mono);font-size:11px;font-weight:400;
+  letter-spacing:0.12em;text-transform:uppercase;
+  cursor:pointer;transition:all 0.25s;border:1px solid;
+  -webkit-appearance:none;appearance:none;
+  -webkit-tap-highlight-color:transparent;
+  margin-top:auto;
+}
+.plan-btn-free{
+  background:transparent;border-color:var(--border2);color:var(--faint);
+  cursor:default;
+}
+.plan-btn-pro{
+  background:transparent;border-color:var(--blade);color:var(--blade);
+}
+.plan-btn-pro:hover{background:var(--blade);color:#000}
+.plan-btn-founder{
+  background:var(--blade);border-color:var(--blade);color:#000;font-weight:500;
+}
+.plan-btn-founder:hover{background:var(--blade-lt);border-color:var(--blade-lt)}
+
+/* API NOTE */
+.api-note{
+  max-width:560px;margin:0 auto;padding:0 40px 56px;
+  animation:fadeUp 0.6s ease 0.3s both;
+}
+.api-note-inner{
+  background:rgba(232,201,125,0.04);border:1px solid rgba(232,201,125,0.1);
+  padding:20px 24px;
+}
+.api-note-label{font-family:var(--mono);font-size:9px;color:var(--blade);text-transform:uppercase;letter-spacing:0.14em;margin-bottom:10px;display:flex;align-items:center;gap:6px}
+.api-note-label::before{content:'//'}
+.api-note-text{font-size:13px;color:var(--off);font-weight:300;line-height:1.7;font-style:italic}
+
+/* FAQ */
+.faq-section{
+  max-width:640px;margin:0 auto;padding:0 40px 96px;
+  animation:fadeUp 0.6s ease 0.35s both;
+}
+.faq-label{font-family:var(--mono);font-size:10px;font-weight:300;color:var(--blade);text-transform:uppercase;letter-spacing:0.16em;margin-bottom:28px;display:flex;align-items:center;gap:10px}
+.faq-label::before{content:'';width:20px;height:1px;background:var(--blade);opacity:0.4}
+.faq-item{border-bottom:1px solid var(--border);padding:20px 0;cursor:pointer}
+.faq-item:first-of-type{border-top:1px solid var(--border)}
+.faq-q{display:flex;align-items:center;justify-content:space-between;gap:16px}
+.faq-q-text{font-family:var(--serif);font-size:18px;font-weight:400;letter-spacing:0.01em;line-height:1.3}
+.faq-toggle{font-family:var(--mono);font-size:16px;color:var(--blade);flex-shrink:0;transition:transform 0.25s;line-height:1}
+.faq-item.open .faq-toggle{transform:rotate(45deg)}
+.faq-a{font-size:14px;color:var(--off);line-height:1.75;font-weight:300;max-height:0;overflow:hidden;transition:max-height 0.35s ease,padding-top 0.3s ease}
+.faq-item.open .faq-a{max-height:200px;padding-top:12px}
+
+/* FOOTER */
+footer{border-top:1px solid var(--border);padding:24px 56px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px;background:var(--bg2)}
+.footer-word{font-family:var(--serif);font-size:14px;font-weight:400;color:rgba(242,241,238,0.2)}
+.footer-word em{font-style:normal;color:rgba(232,201,125,0.35)}
+.footer-copy{font-family:var(--mono);font-size:9px;color:rgba(242,241,238,0.12);text-transform:uppercase;letter-spacing:0.08em}
+.footer-links{display:flex;gap:20px}
+.footer-link{font-family:var(--mono);font-size:10px;color:rgba(242,241,238,0.18);text-decoration:none;text-transform:uppercase;letter-spacing:0.08em;transition:color 0.2s}
+.footer-link:hover{color:var(--blade)}
+
+@media(max-width:860px){
+  nav{padding:16px 20px}
+  .upgrade-hero,.usage-section,.plans-section,.api-note,.faq-section{padding-left:20px;padding-right:20px}
+  .plans-grid{grid-template-columns:1fr}
+  .plan-card.featured{border-top:1px solid var(--border);border-left:2px solid var(--blade)}
+  footer{padding:20px;justify-content:center;text-align:center}
+  .footer-links{justify-content:center}
+}
+</style>
+</head>
+<body>
+
+<nav>
+  <a href="app.html" class="nav-wordmark">Rayse<em>OS</em></a>
+  <a href="app.html" class="nav-back">Back to app</a>
+</nav>
+
+<main>
+
+  <!-- HERO -->
+  <div class="upgrade-hero">
+    <div class="hero-kicker">You've hit your limit</div>
+    <h1 class="hero-title">
+      You're ready for<br>
+      <strong>the full</strong>
+      <em>system.</em>
+    </h1>
+    <span class="hero-blade"></span>
+    <p class="hero-desc">The free tier gave you a taste. The real shift happens when you execute every day for 30 days with unlimited content, full strategy, and a score that updates in real time.</p>
+  </div>
+
+  <!-- USAGE METER -->
+  <div class="usage-section">
+    <div class="usage-card">
+      <div class="usage-label">Your Free Tier Usage</div>
+      <div class="usage-rows">
+        <div class="usage-row">
+          <div class="usage-row-left">
+            <div class="usage-row-name">Plan Generations</div>
+            <div class="usage-track"><div class="usage-fill full" id="planBar" style="width:100%"></div></div>
+          </div>
+          <div class="usage-count used" id="planCount">1 / 1</div>
+        </div>
+        <div class="usage-row">
+          <div class="usage-row-left">
+            <div class="usage-row-name">Content Generations</div>
+            <div class="usage-track"><div class="usage-fill full" id="contentBar" style="width:100%"></div></div>
+          </div>
+          <div class="usage-count used" id="contentCount">3 / 3</div>
+        </div>
+        <div class="usage-row">
+          <div class="usage-row-left">
+            <div class="usage-row-name">Signal Score Updates</div>
+            <div class="usage-track"><div class="usage-fill" style="width:0%"></div></div>
+          </div>
+          <div class="usage-count" style="color:var(--faint)">Locked</div>
+        </div>
+      </div>
+      <div class="usage-note">
+        <strong>Free tier limits:</strong> 1 plan generation · 3 content generations · Static score only.<br>
+        Upgrade to unlock the full 30-day system with unlimited AI access.
+      </div>
+    </div>
+  </div>
+
+  <!-- PLANS -->
+  <div class="plans-section">
+    <div class="plans-label">Choose your plan</div>
+    <div class="plans-grid">
+
+      <!-- FREE -->
+      <div class="plan-card">
+        <div class="plan-tier">Free</div>
+        <div class="plan-price-row">
+          <span class="plan-price-free">$0</span>
+        </div>
+        <div class="plan-period">Forever free</div>
+        <p class="plan-desc">Enough to feel the system. Not enough to run it fully.</p>
+        <div class="plan-blade"></div>
+        <div class="plan-features">
+          <div class="plan-feature">1 plan generation</div>
+          <div class="plan-feature">3 content generations total</div>
+          <div class="plan-feature">Signal Score — static display</div>
+          <div class="plan-feature locked">Unlimited content generation</div>
+          <div class="plan-feature locked">Adaptive strategy engine</div>
+          <div class="plan-feature locked">Live score updates</div>
+          <div class="plan-feature locked">All platforms</div>
+        </div>
+        <div class="plan-limit">Current plan — limits reached</div>
+        <button class="plan-btn plan-btn-free" disabled>Current Plan</button>
+      </div>
+
+      <!-- PRO -->
+      <div class="plan-card featured">
+        <div class="plan-featured-badge">Most Popular</div>
+        <div class="plan-tier">Pro</div>
+        <div class="plan-price-row">
+          <span class="plan-currency">$</span>
+          <span class="plan-price">29</span>
+        </div>
+        <div class="plan-period">Per month · cancel anytime</div>
+        <p class="plan-desc">The full 30-day execution system. Everything you need to shift the dynamic.</p>
+        <div class="plan-blade"></div>
+        <div class="plan-features">
+          <div class="plan-feature"><strong>Unlimited</strong> plan regeneration</div>
+          <div class="plan-feature"><strong>Unlimited</strong> content generation</div>
+          <div class="plan-feature">Live Signal Score — updates daily</div>
+          <div class="plan-feature">Adaptive strategy engine</div>
+          <div class="plan-feature">All platforms — X, LinkedIn, TikTok, Instagram, YouTube</div>
+          <div class="plan-feature">Full 30-day execution calendar</div>
+          <div class="plan-feature">Priority AI generation speed</div>
+        </div>
+        <button class="plan-btn plan-btn-pro" onclick="handleUpgrade('pro')">Get Pro →</button>
+      </div>
+
+      <!-- FOUNDER -->
+      <div class="plan-card">
+        <div class="plan-tier">Founder</div>
+        <div class="plan-price-row">
+          <span class="plan-currency">$</span>
+          <span class="plan-price">59</span>
+        </div>
+        <div class="plan-period">Per month · cancel anytime</div>
+        <p class="plan-desc">For founders actively raising. Everything in Pro plus the investor layer.</p>
+        <div class="plan-blade"></div>
+        <div class="plan-features">
+          <div class="plan-feature">Everything in Pro</div>
+          <div class="plan-feature">Investor matching — relevant investors for your stage</div>
+          <div class="plan-feature">Pitch deck generation</div>
+          <div class="plan-feature">Outreach sequencing — warm intro templates</div>
+          <div class="plan-feature">Fundraising mode — activated at traction threshold</div>
+          <div class="plan-feature">Priority support — direct founder line</div>
+        </div>
+        <button class="plan-btn plan-btn-founder" onclick="handleUpgrade('founder')">Get Founder →</button>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- API TRANSPARENCY NOTE -->
+  <div class="api-note">
+    <div class="api-note-inner">
+      <div class="api-note-label">Why limits exist</div>
+      <p class="api-note-text">RayseOS uses Claude AI to generate your plans and content. Every generation has a real cost. Free tier limits exist so we can keep the product running sustainably and reinvest into making it better for paying founders. No venture capital. No games.</p>
+    </div>
+  </div>
+
+  <!-- FAQ -->
+  <div class="faq-section">
+    <div class="faq-label">Questions</div>
+
+    <div class="faq-item" onclick="toggleFaq(this)">
+      <div class="faq-q">
+        <span class="faq-q-text">Can I cancel at any time?</span>
+        <span class="faq-toggle">+</span>
+      </div>
+      <div class="faq-a">Yes. Cancel any time from your account settings. You keep access until the end of your billing period. No questions asked, no cancellation fees.</div>
+    </div>
+
+    <div class="faq-item" onclick="toggleFaq(this)">
+      <div class="faq-q">
+        <span class="faq-q-text">What happens to my plan if I downgrade?</span>
+        <span class="faq-toggle">+</span>
+      </div>
+      <div class="faq-a">Your existing plan data is saved. You can view it but won't be able to generate new content or regenerate your plan on the free tier. Upgrade again and everything resumes immediately.</div>
+    </div>
+
+    <div class="faq-item" onclick="toggleFaq(this)">
+      <div class="faq-q">
+        <span class="faq-q-text">Is the $29 really worth it?</span>
+        <span class="faq-toggle">+</span>
+      </div>
+      <div class="faq-a">One investor call booked from a post you almost didn't write pays for the entire year. The question isn't whether $29 is worth it. The question is what one inbound investor conversation is worth to you.</div>
+    </div>
+
+    <div class="faq-item" onclick="toggleFaq(this)">
+      <div class="faq-q">
+        <span class="faq-q-text">When does Founder tier investor matching launch?</span>
+        <span class="faq-toggle">+</span>
+      </div>
+      <div class="faq-a">Investor matching and pitch deck generation are being built now and will launch to Founder tier subscribers first. Early subscribers get direct input into how it works.</div>
+    </div>
+
+    <div class="faq-item" onclick="toggleFaq(this)">
+      <div class="faq-q">
+        <span class="faq-q-text">Do you offer refunds?</span>
+        <span class="faq-toggle">+</span>
+      </div>
+      <div class="faq-a">We don't offer refunds for partial billing periods. If you feel the product genuinely didn't work for you, email us at emmaire7@gmail.com and we'll review it case by case.</div>
+    </div>
+  </div>
+
+</main>
+
+<footer>
+  <div class="footer-word">Rayse<em>OS</em></div>
+  <div class="footer-copy">© 2026 RayseOS · All rights reserved</div>
+  <div class="footer-links">
+    <a href="privacy.html" class="footer-link">Privacy</a>
+    <a href="terms.html" class="footer-link">Terms</a>
+    <a href="https://twitter.com/Mani_chukk" target="_blank" rel="noopener" class="footer-link">Twitter</a>
+  </div>
+</footer>
+
+<script>
+/* FAQ TOGGLE */
+function toggleFaq(item) {
+  const isOpen = item.classList.contains('open');
+  document.querySelectorAll('.faq-item.open').forEach(i => i.classList.remove('open'));
+  if (!isOpen) item.classList.add('open');
+}
+
+/* UPGRADE HANDLER */
+function handleUpgrade(plan) {
+  // TODO: wire to Stripe
+  // stripe.redirectToCheckout({ lineItems:[{price: plan === 'pro' ? 'price_pro_id' : 'price_founder_id', quantity:1}], mode:'subscription', successUrl: window.location.origin + '/app.html', cancelUrl: window.location.href })
+  const btn = event.currentTarget;
+  const orig = btn.textContent;
+  btn.textContent = 'Connecting to Stripe...';
+  btn.disabled = true;
+  setTimeout(() => {
+    btn.textContent = 'Stripe not connected yet — add your price IDs';
+    setTimeout(() => { btn.textContent = orig; btn.disabled = false; }, 3000);
+  }, 1000);
+}
+
+/* LOAD REAL USAGE FROM LOCALSTORAGE */
+function loadUsage() {
+  const plans = parseInt(localStorage.getItem('rayseos_plans_used') || '1');
+  const content = parseInt(localStorage.getItem('rayseos_content_used') || '3');
+  const planLimit = 1;
+  const contentLimit = 3;
+
+  document.getElementById('planCount').textContent = plans + ' / ' + planLimit;
+  document.getElementById('contentCount').textContent = content + ' / ' + contentLimit;
+
+  const planPct = Math.min((plans / planLimit) * 100, 100);
+  const contentPct = Math.min((content / contentLimit) * 100, 100);
+
+  document.getElementById('planBar').style.width = planPct + '%';
+  document.getElementById('contentBar').style.width = contentPct + '%';
+
+  if (plans >= planLimit) document.getElementById('planBar').classList.add('full');
+  if (content >= contentLimit) document.getElementById('contentBar').classList.add('full');
+}
+loadUsage();
+</script>
+</body>
+</html>

@@ -1,0 +1,46 @@
+# Environment variables — NEVER commit these
+.env
+.env.local
+.env.production
+.env.development
+*.env
+
+# API keys — just in case
+secrets.js
+config.local.js
+
+# OS files
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+Thumbs.db
+desktop.ini
+
+# Editor files
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# Node (if you ever add dependencies)
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+package-lock.json
+
+# Build output (if you ever add a build step)
+dist/
+build/
+.next/
+out/
+
+# Vercel
+.vercel/
+
+# Logs
+*.log
+logs/

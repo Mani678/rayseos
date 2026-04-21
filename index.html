@@ -1,0 +1,985 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="theme-color" content="#05050A">
+<meta name="robots" content="index, follow">
+<title>RayseOS — You're Not Chasing Anymore</title>
+<meta name="description" content="The fundraising execution system that shifts the power dynamic. Stop pitching cold. Start being pursued.">
+<meta property="og:title" content="RayseOS — You're Not Chasing Anymore">
+<meta property="og:description" content="Execute for 30 days. Investors start finding you.">
+<meta property="og:type" content="website">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;0,700;1,300;1,400;1,500&family=Outfit:wght@200;300;400;500;600&family=DM+Mono:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+
+:root{
+  --bg:        #05050A;
+  --bg2:       #07070D;
+  --surface:   #0A0A12;
+  --surface2:  #0E0E18;
+  --border:    rgba(255,255,255,0.05);
+  --border2:   rgba(255,255,255,0.09);
+  --white:     #F2F1EE;
+  --off:       rgba(242,241,238,0.55);
+  --faint:     rgba(242,241,238,0.22);
+  --dimmed:    rgba(242,241,238,0.08);
+  --blade:     #E8C97D;
+  --blade-dim: rgba(232,201,125,0.1);
+  --blade-lt:  #F0D99A;
+  --green:     #7ecb9b;
+  --serif:     'Cormorant Garamond', Georgia, serif;
+  --sans:      'Outfit', -apple-system, sans-serif;
+  --mono:      'DM Mono', monospace;
+  --nav-h:     64px;
+}
+
+html{scroll-behavior:smooth;-webkit-text-size-adjust:100%}
+
+body{
+  background:var(--bg);color:var(--white);
+  font-family:var(--sans);font-size:15px;line-height:1.6;
+  font-weight:300;overflow-x:hidden;
+  -webkit-font-smoothing:antialiased;
+}
+
+body::before{
+  content:'';position:fixed;inset:0;
+  background:radial-gradient(ellipse at 50% 35%,transparent 25%,rgba(5,5,10,0.65) 100%);
+  pointer-events:none;z-index:0;
+}
+body::after{
+  content:'';position:fixed;inset:0;
+  background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 512 512' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='g'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23g)' opacity='0.04'/%3E%3C/svg%3E");
+  pointer-events:none;z-index:1;opacity:0.6;
+}
+
+header,main,footer,section,div.score-section-wrap{position:relative;z-index:2}
+
+@keyframes fadeUp{from{opacity:0;transform:translateY(24px)}to{opacity:1;transform:translateY(0)}}
+@keyframes fadeIn{from{opacity:0}to{opacity:1}}
+@keyframes bladeIn{from{width:0}to{width:100%}}
+@keyframes pulse{0%,100%{opacity:0.4}50%{opacity:1}}
+@keyframes countUp{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:translateY(0)}}
+
+/* ── NAV ── */
+header{position:fixed;top:0;left:0;right:0;z-index:300}
+nav{
+  display:flex;align-items:center;justify-content:space-between;
+  padding:0 56px;height:var(--nav-h);
+  background:transparent;border-bottom:1px solid transparent;
+  transition:background 0.5s,border-color 0.5s;
+}
+nav.scrolled{background:rgba(5,5,10,0.94);backdrop-filter:blur(24px);-webkit-backdrop-filter:blur(24px);border-bottom-color:var(--border)}
+
+.nav-wordmark{font-family:var(--serif);font-size:20px;font-weight:500;letter-spacing:0.04em;color:var(--white);text-decoration:none;-webkit-tap-highlight-color:transparent}
+.nav-wordmark em{font-style:normal;color:var(--blade)}
+
+.nav-links{display:flex;align-items:center;gap:36px}
+.nav-link{font-family:var(--mono);font-size:11px;font-weight:300;color:var(--faint);text-decoration:none;letter-spacing:0.08em;text-transform:uppercase;transition:color 0.25s;-webkit-tap-highlight-color:transparent}
+.nav-link:hover{color:var(--white)}
+
+.nav-right{display:flex;align-items:center;gap:24px}
+.nav-cta{font-family:var(--mono);font-size:11px;font-weight:400;color:var(--blade);letter-spacing:0.1em;text-transform:uppercase;text-decoration:none;cursor:pointer;padding-bottom:1px;border-bottom:1px solid rgba(232,201,125,0.3);transition:border-color 0.25s,color 0.25s;background:none;border-top:none;border-left:none;border-right:none}
+.nav-cta:hover{border-bottom-color:var(--blade);color:var(--blade-lt)}
+
+.nav-hamburger{display:none;flex-direction:column;gap:6px;cursor:pointer;padding:6px;background:none;border:none;-webkit-tap-highlight-color:transparent}
+.nav-hamburger span{display:block;width:22px;height:1px;background:var(--faint);transition:all 0.3s ease;transform-origin:center}
+.nav-hamburger.open span:nth-child(1){transform:translateY(7px) rotate(45deg);background:var(--white)}
+.nav-hamburger.open span:nth-child(2){opacity:0;transform:scaleX(0)}
+.nav-hamburger.open span:nth-child(3){transform:translateY(-7px) rotate(-45deg);background:var(--white)}
+
+.mobile-menu{position:fixed;inset:0;background:rgba(5,5,10,0.98);z-index:290;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:36px;opacity:0;visibility:hidden;transition:opacity 0.3s,visibility 0.3s;pointer-events:none}
+.mobile-menu.open{opacity:1;visibility:visible;pointer-events:auto}
+.mm-link{font-family:var(--serif);font-size:36px;font-weight:400;color:var(--faint);text-decoration:none;letter-spacing:0.03em;transition:color 0.2s;-webkit-tap-highlight-color:transparent}
+.mm-link:hover,.mm-link:active{color:var(--white)}
+.mm-cta{font-family:var(--mono);font-size:12px;letter-spacing:0.14em;text-transform:uppercase;color:var(--blade);text-decoration:none;border-bottom:1px solid rgba(232,201,125,0.3);padding-bottom:2px;margin-top:12px;-webkit-tap-highlight-color:transparent}
+
+/* ── HERO ── */
+.hero{
+  min-height:100vh;display:flex;flex-direction:column;
+  justify-content:center;
+  padding:calc(var(--nav-h) + 40px) 56px 80px;
+  position:relative;overflow:hidden;
+}
+.blade-line{position:absolute;left:0;right:0;top:38%;height:1px;background:linear-gradient(90deg,transparent 0%,var(--blade) 20%,var(--blade) 80%,transparent 100%);opacity:0.12}
+.hero-bg-word{position:absolute;left:-0.02em;top:50%;transform:translateY(-54%);font-family:var(--serif);font-size:clamp(160px,22vw,340px);font-weight:700;color:transparent;-webkit-text-stroke:1px rgba(242,241,238,0.04);line-height:0.85;pointer-events:none;user-select:none;letter-spacing:-0.02em;white-space:nowrap}
+.hero-content{position:relative;z-index:2;max-width:900px}
+
+.hero-pre{font-family:var(--mono);font-size:11px;font-weight:300;color:var(--blade);letter-spacing:0.18em;text-transform:uppercase;margin-bottom:28px;opacity:0;animation:fadeIn 0.8s ease 0.3s forwards;display:flex;align-items:center;gap:14px}
+.hero-pre::before{content:'';display:block;width:40px;height:1px;background:var(--blade);opacity:0.5}
+
+.hero-h1{font-family:var(--serif);font-size:clamp(56px,9vw,120px);font-weight:300;line-height:0.93;letter-spacing:-0.01em;margin-bottom:10px;opacity:0;animation:fadeUp 0.9s ease 0.45s forwards}
+.hero-h1 strong{font-weight:600;display:block}
+.hero-h1 em{font-style:italic;color:var(--blade);display:block;font-weight:300}
+
+.hero-blade{display:block;width:0;height:2px;background:var(--blade);margin:28px 0 32px;animation:bladeIn 1s ease 1.2s forwards}
+.hero-desc{font-size:clamp(15px,2vw,18px);color:var(--off);font-weight:300;line-height:1.75;max-width:560px;margin-bottom:16px;opacity:0;animation:fadeUp 0.9s ease 0.9s forwards}
+
+/* THE PROMISE — bold, repeatable */
+.hero-promise{
+  font-family:var(--serif);font-size:clamp(18px,2.5vw,24px);
+  font-style:italic;color:var(--blade);
+  margin-bottom:44px;
+  opacity:0;animation:fadeUp 0.9s ease 1.05s forwards;
+  display:flex;align-items:center;gap:14px;
+}
+.hero-promise::before{content:'';display:block;width:24px;height:1px;background:var(--blade);opacity:0.5;flex-shrink:0}
+
+.hero-waitlist{opacity:0;animation:fadeUp 0.9s ease 1.1s forwards;max-width:480px}
+.wl-label{font-family:var(--mono);font-size:10px;font-weight:300;color:var(--faint);letter-spacing:0.14em;text-transform:uppercase;margin-bottom:10px}
+.wl-form{display:flex;border-bottom:1px solid rgba(242,241,238,0.18);transition:border-color 0.3s}
+.wl-form:focus-within{border-bottom-color:var(--blade)}
+.wl-input{flex:1;padding:12px 0;background:transparent;border:none;color:var(--white);font-family:var(--mono);font-size:13px;font-weight:300;outline:none;min-width:0;-webkit-appearance:none;appearance:none}
+.wl-input::placeholder{color:rgba(242,241,238,0.18)}
+@media(max-width:768px){.wl-input{font-size:16px !important}}
+.wl-btn{padding:12px 0 12px 20px;background:transparent;border:none;font-family:var(--mono);font-size:11px;font-weight:400;color:var(--blade);letter-spacing:0.1em;text-transform:uppercase;cursor:pointer;white-space:nowrap;flex-shrink:0;transition:color 0.2s;-webkit-tap-highlight-color:transparent;-webkit-appearance:none;appearance:none}
+.wl-btn:hover{color:var(--blade-lt)}
+.wl-btn.loading{color:var(--faint);cursor:default;pointer-events:none}
+.wl-btn.success{color:var(--green);cursor:default;pointer-events:none}
+.wl-error{font-family:var(--mono);font-size:10px;color:#c97d7d;margin-top:6px;display:none}
+.wl-error.visible{display:block}
+.wl-meta{font-family:var(--mono);font-size:10px;font-weight:300;color:var(--faint);margin-top:12px;letter-spacing:0.06em}
+.wl-meta strong{color:rgba(232,201,125,0.7)}
+
+.hero-scroll{position:absolute;bottom:40px;right:56px;font-family:var(--mono);font-size:9px;color:var(--faint);letter-spacing:0.16em;text-transform:uppercase;writing-mode:vertical-rl;display:flex;align-items:center;gap:10px;opacity:0;animation:fadeIn 1s ease 1.8s forwards}
+.hero-scroll::after{content:'';display:block;width:1px;height:40px;background:linear-gradient(var(--faint),transparent)}
+
+/* ── SECTION BASE ── */
+.section{border-top:1px solid var(--border)}
+.section-inner{max-width:1060px;margin:0 auto;padding:96px 56px 112px}
+.s-marker{display:flex;align-items:center;gap:16px;margin-bottom:64px}
+.s-num{font-family:var(--mono);font-size:10px;font-weight:300;color:var(--blade);letter-spacing:0.1em}
+.s-line{flex:1;height:1px;background:var(--border2);max-width:60px}
+.s-label{font-family:var(--mono);font-size:10px;font-weight:300;color:var(--faint);letter-spacing:0.14em;text-transform:uppercase}
+.s-title{font-family:var(--serif);font-size:clamp(36px,5vw,52px);font-weight:300;letter-spacing:-0.01em;max-width:600px;line-height:1.1;margin-bottom:56px}
+.s-title em{font-style:italic;color:var(--blade)}
+.s-title strong{font-weight:600}
+
+/* ── DAY ONE MOCK ── */
+.day-one-section .section-inner{padding-bottom:0}
+.day-one-wrap{
+  border:1px solid var(--border2);
+  background:var(--surface);
+  overflow:hidden;
+  margin-top:0;
+}
+.day-one-topbar{
+  display:flex;align-items:center;justify-content:space-between;
+  padding:12px 24px;
+  border-bottom:1px solid var(--border);
+  background:rgba(0,0,0,0.3);
+}
+.dot-row{display:flex;gap:6px}
+.dot{width:10px;height:10px;border-radius:50%}
+.dot-red{background:#ff5f57}.dot-yellow{background:#febc2e}.dot-green{background:#28c840}
+.day-one-title{font-family:var(--mono);font-size:11px;color:var(--faint);letter-spacing:0.1em;text-transform:uppercase}
+.day-one-badge{font-family:var(--mono);font-size:9px;color:var(--blade);letter-spacing:0.1em;text-transform:uppercase;background:var(--blade-dim);padding:3px 8px;border:1px solid rgba(232,201,125,0.15)}
+
+.day-one-body{
+  display:grid;grid-template-columns:1fr 1fr;
+}
+.day-one-mission{
+  padding:36px 40px;
+  border-right:1px solid var(--border);
+}
+.day-one-mission-label{font-family:var(--mono);font-size:9px;color:var(--blade);text-transform:uppercase;letter-spacing:0.14em;margin-bottom:14px;display:flex;align-items:center;gap:8px}
+.day-one-mission-label::before{content:'//';color:rgba(232,201,125,0.3)}
+.day-one-mission-title{font-family:var(--serif);font-size:28px;font-weight:500;line-height:1.1;margin-bottom:12px}
+.day-one-mission-title em{font-style:italic;color:var(--blade)}
+.day-one-mission-desc{font-size:13px;color:var(--off);line-height:1.7;font-weight:300;margin-bottom:24px}
+.day-one-stats{display:flex;gap:0;border:1px solid var(--border)}
+.day-one-stat{flex:1;padding:12px 16px;border-right:1px solid var(--border)}
+.day-one-stat:last-child{border-right:none}
+.day-one-stat-lbl{font-family:var(--mono);font-size:9px;color:var(--faint);text-transform:uppercase;letter-spacing:0.1em;margin-bottom:4px}
+.day-one-stat-val{font-family:var(--serif);font-size:18px;font-weight:500;color:var(--blade)}
+.day-one-cta{display:inline-block;margin-top:20px;padding:10px 24px;border:1px solid var(--blade);font-family:var(--mono);font-size:11px;color:var(--blade);text-transform:uppercase;letter-spacing:0.1em}
+
+.day-one-content{padding:36px 40px}
+.day-one-content-label{font-family:var(--mono);font-size:9px;color:var(--blade);text-transform:uppercase;letter-spacing:0.14em;margin-bottom:14px;display:flex;align-items:center;gap:8px}
+.day-one-content-label::before{content:'//';color:rgba(232,201,125,0.3)}
+.day-one-post{
+  background:rgba(0,0,0,0.3);
+  border:1px solid var(--border2);
+  padding:20px;
+  margin-bottom:16px;
+}
+.day-one-post-platform{font-family:var(--mono);font-size:9px;color:var(--faint);text-transform:uppercase;letter-spacing:0.1em;margin-bottom:10px}
+.day-one-post-hook{font-family:var(--serif);font-size:18px;font-weight:500;font-style:italic;color:var(--white);margin-bottom:10px;line-height:1.3}
+.day-one-post-body{font-size:13px;color:var(--off);line-height:1.7;font-weight:300}
+.day-one-post-tags{display:flex;flex-wrap:wrap;gap:6px;margin-top:12px}
+.day-one-tag{font-family:var(--mono);font-size:9px;color:rgba(232,201,125,0.5);letter-spacing:0.05em}
+
+.day-one-score-row{
+  display:flex;align-items:center;gap:12px;
+  padding:14px 16px;background:rgba(0,0,0,0.2);border:1px solid var(--border);
+}
+.day-one-score-label{font-family:var(--mono);font-size:10px;color:var(--faint);text-transform:uppercase;letter-spacing:0.1em;flex:1}
+.day-one-score-before{font-family:var(--serif);font-size:22px;font-weight:500;color:rgba(242,241,238,0.3)}
+.day-one-score-arrow{font-family:var(--mono);font-size:12px;color:var(--blade);margin:0 4px}
+.day-one-score-after{font-family:var(--serif);font-size:22px;font-weight:600;color:var(--blade)}
+.day-one-score-delta{font-family:var(--mono);font-size:10px;color:var(--green);background:rgba(126,203,155,0.1);padding:2px 8px;border:1px solid rgba(126,203,155,0.2)}
+
+/* ── PROOF — BEFORE / AFTER ── */
+.proof-before-after{
+  display:grid;grid-template-columns:repeat(3,1fr);
+  gap:1px;background:var(--border);border:1px solid var(--border);
+  margin-top:56px;
+}
+.ba-card{background:var(--bg);padding:32px 28px;transition:background 0.3s;position:relative;overflow:hidden}
+.ba-card:hover{background:var(--surface)}
+.ba-card::after{content:'';position:absolute;bottom:0;left:0;right:0;height:1px;background:var(--blade);transform:scaleX(0);transform-origin:left;transition:transform 0.4s ease}
+.ba-card:hover::after{transform:scaleX(1)}
+.ba-label{font-family:var(--mono);font-size:9px;color:var(--blade);text-transform:uppercase;letter-spacing:0.14em;margin-bottom:20px}
+.ba-name{font-family:var(--serif);font-size:16px;font-weight:500;margin-bottom:4px}
+.ba-role{font-family:var(--mono);font-size:9px;color:var(--faint);text-transform:uppercase;letter-spacing:0.08em;margin-bottom:20px}
+.ba-before{
+  padding:14px 16px;background:rgba(255,255,255,0.03);border:1px solid var(--border);
+  margin-bottom:8px;
+}
+.ba-before-lbl{font-family:var(--mono);font-size:8px;color:rgba(242,241,238,0.25);text-transform:uppercase;letter-spacing:0.12em;margin-bottom:6px}
+.ba-before-val{font-size:13px;color:var(--off);font-weight:300;line-height:1.5}
+.ba-after{
+  padding:14px 16px;background:var(--blade-dim);border:1px solid rgba(232,201,125,0.15);
+  margin-bottom:14px;
+}
+.ba-after-lbl{font-family:var(--mono);font-size:8px;color:rgba(232,201,125,0.5);text-transform:uppercase;letter-spacing:0.12em;margin-bottom:6px}
+.ba-after-val{font-size:13px;color:var(--white);font-weight:400;line-height:1.5}
+.ba-quote{font-family:var(--serif);font-size:14px;font-style:italic;color:var(--off);line-height:1.65;font-weight:300}
+
+/* ── SCORE SECTION ── */
+.score-section-wrap{background:var(--surface);border-top:1px solid var(--border);border-bottom:1px solid var(--border)}
+.score-section-inner{max-width:1060px;margin:0 auto;padding:96px 56px 112px;display:grid;grid-template-columns:1fr 1.2fr;gap:96px;align-items:center}
+.score-giant{font-family:var(--serif);font-size:clamp(120px,18vw,200px);font-weight:700;line-height:0.82;letter-spacing:-0.03em;color:var(--blade);display:block;margin-bottom:16px}
+.score-meta{font-family:var(--mono);font-size:11px;font-weight:300;color:var(--faint);text-transform:uppercase;letter-spacing:0.14em;margin-bottom:24px}
+.score-copy{font-size:15px;color:var(--off);line-height:1.8;font-weight:300;max-width:360px;margin-bottom:24px}
+
+/* SCORE SOCIAL SHARE */
+.score-social{
+  display:flex;align-items:center;gap:12px;
+  padding:14px 18px;border:1px solid rgba(232,201,125,0.2);
+  background:var(--blade-dim);cursor:pointer;
+  transition:border-color 0.25s;
+  max-width:320px;
+}
+.score-social:hover{border-color:rgba(232,201,125,0.4)}
+.score-social-text{font-family:var(--mono);font-size:11px;color:var(--blade);text-transform:uppercase;letter-spacing:0.1em;flex:1}
+.score-social-icon{font-size:14px;flex-shrink:0}
+
+.score-breakdown{display:flex;flex-direction:column;gap:0;border:1px solid var(--border)}
+.sb-row{display:grid;grid-template-columns:1fr auto auto;gap:20px;align-items:center;padding:18px 24px;border-bottom:1px solid var(--border);transition:background 0.2s}
+.sb-row:last-child{border-bottom:none}
+.sb-row:hover{background:rgba(232,201,125,0.025)}
+.sb-name{font-family:var(--mono);font-size:11px;font-weight:300;color:var(--faint);text-transform:uppercase;letter-spacing:0.1em}
+.sb-bar{width:80px;height:1px;background:rgba(255,255,255,0.06);position:relative}
+.sb-fill{position:absolute;top:0;left:0;height:100%;background:var(--blade)}
+.sb-val{font-family:var(--serif);font-size:24px;font-weight:500;color:var(--blade);text-align:right;min-width:36px}
+
+/* ── SYSTEM ── */
+.signal-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:1px;background:var(--border);border:1px solid var(--border);margin-top:0}
+.signal-card{background:var(--bg);padding:32px 28px;transition:background 0.3s;position:relative;overflow:hidden}
+.signal-card::after{content:'';position:absolute;bottom:0;left:0;right:0;height:1px;background:var(--blade);transform:scaleX(0);transform-origin:left;transition:transform 0.4s ease}
+.signal-card:hover{background:var(--surface)}
+.signal-card:hover::after{transform:scaleX(1)}
+.signal-card-label{font-family:var(--mono);font-size:9px;font-weight:300;color:var(--blade);text-transform:uppercase;letter-spacing:0.14em;margin-bottom:16px}
+.signal-card-title{font-family:var(--serif);font-size:22px;font-weight:500;margin-bottom:10px;letter-spacing:0.01em}
+.signal-card-desc{font-size:13px;color:var(--off);line-height:1.7;font-weight:300}
+
+/* ── PILLARS ── */
+.pillars-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:0;border-top:1px solid var(--border)}
+.pillar{padding:40px 36px;border-right:1px solid var(--border);position:relative;transition:background 0.4s}
+.pillar:last-child{border-right:none}
+.pillar::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:var(--blade);transform:scaleX(0);transform-origin:left;transition:transform 0.4s ease}
+.pillar:hover{background:rgba(232,201,125,0.025)}
+.pillar:hover::before{transform:scaleX(1)}
+.pillar-num{font-family:var(--mono);font-size:10px;font-weight:300;color:var(--blade);letter-spacing:0.12em;margin-bottom:24px;display:block}
+.pillar-title{font-family:var(--serif);font-size:26px;font-weight:500;letter-spacing:0.01em;margin-bottom:14px;line-height:1.1}
+.pillar-desc{font-size:13px;color:var(--off);line-height:1.75;font-weight:300}
+
+/* ── HOW ── */
+.how-rows{display:flex;flex-direction:column;gap:0;border-top:1px solid var(--border)}
+.how-row{display:grid;grid-template-columns:80px 1fr 1fr;gap:0;border-bottom:1px solid var(--border);transition:background 0.3s}
+.how-row:hover{background:rgba(232,201,125,0.02)}
+.how-row-num{padding:36px 24px;border-right:1px solid var(--border);display:flex;align-items:flex-start;justify-content:center;padding-top:40px}
+.how-row-num span{font-family:var(--serif);font-size:44px;font-weight:300;color:rgba(242,241,238,0.12);letter-spacing:-0.02em;line-height:1;transition:color 0.3s}
+.how-row:hover .how-row-num span{color:rgba(232,201,125,0.25)}
+.how-row-left{padding:36px 40px;border-right:1px solid var(--border)}
+.how-row-title{font-family:var(--serif);font-size:28px;font-weight:500;letter-spacing:0.01em;line-height:1.1;margin-bottom:8px}
+.how-row-tag{font-family:var(--mono);font-size:10px;font-weight:300;color:var(--blade);letter-spacing:0.1em;text-transform:uppercase}
+.how-row-right{padding:36px 40px;display:flex;align-items:center}
+.how-row-desc{font-size:14px;color:var(--off);line-height:1.75;font-weight:300}
+
+/* ── PUBLIC PROOF LOOP ── */
+.proof-loop-section{border-top:1px solid var(--border)}
+.proof-loop-inner{max-width:1060px;margin:0 auto;padding:96px 56px 112px}
+.proof-loop-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:40px;margin-top:64px}
+.proof-card{padding:0;position:relative}
+.proof-card::before{content:'';position:absolute;top:0;left:0;width:1px;height:100%;background:var(--border2);transition:background 0.3s}
+.proof-card:hover::before{background:rgba(232,201,125,0.4)}
+.proof-text{font-family:var(--serif);font-size:17px;font-weight:300;font-style:italic;color:var(--off);line-height:1.75;padding-left:20px;margin-bottom:20px}
+.proof-attr{padding-left:20px}
+.proof-name{font-family:var(--mono);font-size:10px;font-weight:400;color:rgba(242,241,238,0.5);text-transform:uppercase;letter-spacing:0.1em}
+.proof-role{font-family:var(--mono);font-size:9px;font-weight:300;color:rgba(232,201,125,0.45);text-transform:uppercase;letter-spacing:0.08em;margin-top:2px}
+
+/* INBOUND SCREENSHOT MOCK */
+.inbound-mock{
+  border:1px solid var(--border2);
+  background:rgba(0,0,0,0.4);
+  padding:20px;margin-top:40px;
+}
+.inbound-mock-label{font-family:var(--mono);font-size:9px;color:var(--blade);text-transform:uppercase;letter-spacing:0.14em;margin-bottom:16px;display:flex;align-items:center;gap:8px}
+.inbound-mock-label::before{content:'//'}
+.inbound-message{display:flex;gap:12px;padding:14px;background:var(--surface);border:1px solid var(--border);margin-bottom:8px;position:relative}
+.inbound-message:last-child{margin-bottom:0}
+.inbound-avatar{width:32px;height:32px;border-radius:50%;background:linear-gradient(135deg,#4a4a6a,#2a2a4a);display:flex;align-items:center;justify-content:center;font-family:var(--serif);font-size:14px;font-weight:600;color:var(--white);flex-shrink:0}
+.inbound-body{}
+.inbound-sender{font-family:var(--mono);font-size:10px;color:rgba(242,241,238,0.5);text-transform:uppercase;letter-spacing:0.08em;margin-bottom:4px}
+.inbound-text{font-size:13px;color:var(--off);line-height:1.6;font-weight:300}
+.inbound-badge{position:absolute;top:10px;right:12px;font-family:var(--mono);font-size:8px;color:var(--green);background:rgba(126,203,155,0.1);padding:2px 6px;border:1px solid rgba(126,203,155,0.2);text-transform:uppercase;letter-spacing:0.08em}
+
+/* ── STATEMENT ── */
+.statement-section .section-inner{display:flex;gap:80px;align-items:flex-start}
+.statement-left{flex:1;max-width:360px}
+.statement-title{font-family:var(--serif);font-size:clamp(40px,5vw,58px);font-weight:400;line-height:1.05;letter-spacing:-0.01em}
+.statement-title em{font-style:italic;color:var(--blade)}
+.statement-title strong{font-weight:600;display:block}
+.statement-right{flex:1;padding-top:8px}
+.statement-body{font-size:16px;color:var(--off);line-height:1.85;font-weight:300;margin-bottom:28px}
+.statement-body strong{color:var(--white);font-weight:500}
+.statement-blade{width:100%;height:1px;background:linear-gradient(90deg,var(--blade) 0%,transparent 100%);opacity:0.3;margin:28px 0}
+
+/* ── CTA ── */
+.cta-section{border-top:1px solid var(--border)}
+.cta-inner{max-width:1060px;margin:0 auto;padding:120px 56px 140px;display:grid;grid-template-columns:1fr 1fr;gap:80px;align-items:center}
+.cta-headline{font-family:var(--serif);font-size:clamp(48px,7vw,80px);font-weight:300;line-height:0.95;letter-spacing:-0.01em;margin-bottom:24px}
+.cta-headline strong{font-weight:600;display:block}
+.cta-headline em{font-style:italic;color:var(--blade)}
+.cta-blade{display:block;width:60px;height:1px;background:var(--blade);margin-bottom:24px;opacity:0.6}
+.cta-sub{font-size:15px;color:var(--off);line-height:1.8;font-weight:300;max-width:420px}
+.cta-right{display:flex;flex-direction:column;justify-content:center}
+.cta-form-label{font-family:var(--mono);font-size:10px;font-weight:300;color:var(--faint);letter-spacing:0.14em;text-transform:uppercase;margin-bottom:10px}
+.cta-form{display:flex;border-bottom:1px solid rgba(242,241,238,0.18);transition:border-color 0.3s;margin-bottom:12px}
+.cta-form:focus-within{border-bottom-color:var(--blade)}
+.cta-meta{font-family:var(--mono);font-size:10px;font-weight:300;color:var(--faint);letter-spacing:0.06em}
+.cta-meta strong{color:rgba(232,201,125,0.7)}
+.cta-promise{margin-top:32px;padding-top:32px;border-top:1px solid var(--border)}
+.cta-promise-text{font-family:var(--serif);font-size:15px;font-style:italic;color:var(--faint);line-height:1.6}
+
+/* ── FOOTER ── */
+footer{border-top:1px solid var(--border);padding:28px 56px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:14px;background:var(--bg2)}
+.footer-word{font-family:var(--serif);font-size:15px;font-weight:400;color:rgba(242,241,238,0.2);letter-spacing:0.03em}
+.footer-word em{font-style:normal;color:rgba(232,201,125,0.35)}
+.footer-copy{font-family:var(--mono);font-size:10px;font-weight:300;color:rgba(242,241,238,0.12);text-transform:uppercase;letter-spacing:0.08em}
+.footer-links{display:flex;gap:24px}
+.footer-link{font-family:var(--mono);font-size:10px;font-weight:300;color:rgba(242,241,238,0.18);text-decoration:none;text-transform:uppercase;letter-spacing:0.08em;transition:color 0.25s}
+.footer-link:hover{color:var(--blade)}
+
+/* REVEAL */
+.reveal{opacity:0;transform:translateY(20px);transition:opacity 0.8s ease,transform 0.8s ease}
+.reveal.visible{opacity:1;transform:translateY(0)}
+.rd1{transition-delay:0.08s}.rd2{transition-delay:0.16s}.rd3{transition-delay:0.24s}
+
+/* ── RESPONSIVE ── */
+@media(max-width:900px){
+  nav{padding:0 24px}
+  .nav-links,.nav-cta{display:none}
+  .nav-hamburger{display:flex}
+  .hero{padding:calc(var(--nav-h) + 32px) 24px 64px;justify-content:center;min-height:100vh}
+  .hero-bg-word{display:none}
+  .hero-scroll{display:none}
+  .section-inner,.proof-loop-inner,.cta-inner{padding:72px 24px 88px}
+  .score-section-inner{grid-template-columns:1fr;gap:48px;padding:72px 24px 88px}
+  .statement-section .section-inner{flex-direction:column;gap:40px}
+  .statement-left{max-width:100%}
+  .pillars-grid,.proof-before-after,.signal-grid{grid-template-columns:1fr}
+  .pillar,.ba-card,.signal-card{border-right:none;border-bottom:1px solid var(--border)}
+  .pillar:last-child,.ba-card:last-child,.signal-card:last-child{border-bottom:none}
+  .how-row{grid-template-columns:1fr}
+  .how-row-num{display:none}
+  .how-row-left{border-right:none;padding-bottom:8px}
+  .how-row-right{padding-top:0}
+  .proof-loop-grid{grid-template-columns:1fr;gap:32px}
+  .day-one-body{grid-template-columns:1fr}
+  .day-one-mission{border-right:none;border-bottom:1px solid var(--border)}
+  .cta-inner{grid-template-columns:1fr;gap:48px}
+  footer{padding:20px 24px;justify-content:center;text-align:center}
+  .footer-links{justify-content:center}
+}
+@media(max-width:540px){
+  .hero-h1{font-size:clamp(48px,13vw,72px)}
+  .wl-form,.cta-form{flex-direction:column;border-bottom:none;gap:0}
+  .wl-input,.cta-form .wl-input{border-bottom:1px solid rgba(242,241,238,0.18);font-size:16px !important}
+  .wl-btn,.cta-form .wl-btn{padding:12px 0;text-align:left;border-bottom:1px solid rgba(232,201,125,0.3)}
+}
+</style>
+</head>
+<body>
+
+<!-- MOBILE MENU -->
+<div class="mobile-menu" id="mobileMenu">
+  <a href="#proof" class="mm-link" onclick="closeMenu()">Proof</a>
+  <a href="#how" class="mm-link" onclick="closeMenu()">How It Works</a>
+  <a href="#system" class="mm-link" onclick="closeMenu()">System</a>
+  <a href="#cta" class="mm-link" onclick="closeMenu()">Early Access</a>
+  <a href="#cta" class="mm-cta" onclick="closeMenu()">Join the Waitlist</a>
+</div>
+
+<!-- NAV -->
+<header>
+  <nav id="mainNav">
+    <a href="#" class="nav-wordmark">Rayse<em>OS</em></a>
+    <div class="nav-links">
+      <a href="#proof" class="nav-link">Proof</a>
+      <a href="#how" class="nav-link">How It Works</a>
+      <a href="#system" class="nav-link">System</a>
+      <a href="#cta" class="nav-link">Early Access</a>
+    </div>
+    <div class="nav-right">
+      <a href="#cta" class="nav-cta">Join the Waitlist</a>
+      <button class="nav-hamburger" id="hamburger" onclick="toggleMenu()">
+        <span></span><span></span><span></span>
+      </button>
+    </div>
+  </nav>
+</header>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="blade-line"></div>
+  <div class="hero-bg-word" aria-hidden="true">RAYSE</div>
+  <div class="hero-content">
+    <div class="hero-pre">Fundraising Execution System</div>
+    <h1 class="hero-h1">
+      You're not<br>
+      <strong>chasing</strong>
+      <em>anymore.</em>
+    </h1>
+    <span class="hero-blade"></span>
+    <p class="hero-desc">RayseOS gives you a 30-day execution system that builds the kind of public presence investors find on their own. Daily missions. AI-generated content. A live score that tracks your fundability.</p>
+    <p class="hero-promise">Execute for 30 days. Investors start finding you.</p>
+    <div class="hero-waitlist">
+      <div class="wl-label">Request early access</div>
+      <div class="wl-form" id="heroForm">
+        <input type="email" class="wl-input" id="heroEmail" placeholder="your@email.com" autocomplete="email" autocapitalize="none" autocorrect="off" inputmode="email" />
+        <button class="wl-btn" id="heroBtn" onclick="joinWaitlist('hero')">I'm Ready →</button>
+      </div>
+      <div class="wl-error" id="heroError">Enter a valid email address.</div>
+      <div class="wl-meta" id="heroCount"><strong>140+</strong> founders already on the waitlist</div>
+    </div>
+  </div>
+  <div class="hero-scroll">Scroll</div>
+</section>
+
+<!-- DAY ONE MISSION — show the system -->
+<section class="section day-one-section" id="day-one">
+  <div class="section-inner">
+    <div class="s-marker reveal">
+      <span class="s-num">01</span>
+      <span class="s-line"></span>
+      <span class="s-label">Day One — What It Actually Looks Like</span>
+    </div>
+    <h2 class="s-title reveal">You open it.<br>You know <em>exactly</em> what to do.</h2>
+  </div>
+  <div class="section-inner" style="padding-top:0">
+    <div class="day-one-wrap reveal">
+      <div class="day-one-topbar">
+        <div class="dot-row">
+          <div class="dot dot-red"></div>
+          <div class="dot dot-yellow"></div>
+          <div class="dot dot-green"></div>
+        </div>
+        <div class="day-one-title">RayseOS — Command Center</div>
+        <div class="day-one-badge">Day 1 of 30</div>
+      </div>
+      <div class="day-one-body">
+        <div class="day-one-mission">
+          <div class="day-one-mission-label">Today's Mission</div>
+          <div class="day-one-mission-title">Establish Your<br><em>Founder Narrative</em></div>
+          <p class="day-one-mission-desc">Investors fund people before products. Today you build the story that makes them want to fund you. This is your highest-leverage action in Week 1.</p>
+          <div class="day-one-stats">
+            <div class="day-one-stat">
+              <div class="day-one-stat-lbl">Expected</div>
+              <div class="day-one-stat-val">+30 followers</div>
+            </div>
+            <div class="day-one-stat">
+              <div class="day-one-stat-lbl">Platform</div>
+              <div class="day-one-stat-val">X + LinkedIn</div>
+            </div>
+            <div class="day-one-stat">
+              <div class="day-one-stat-lbl">Time</div>
+              <div class="day-one-stat-val">~2 hours</div>
+            </div>
+          </div>
+          <div class="day-one-cta">Start Execution →</div>
+        </div>
+        <div class="day-one-content">
+          <div class="day-one-content-label">AI-Generated Content — Ready to Post</div>
+          <div class="day-one-post">
+            <div class="day-one-post-platform">X / Twitter · Thread</div>
+            <div class="day-one-post-hook">"I almost didn't build this."</div>
+            <p class="day-one-post-body">18 months ago I watched a $2.3M position get liquidated in 4 minutes because of slippage the protocol couldn't detect. That was the day I started building Aegis. Here's what I learned about the problem nobody was solving...</p>
+            <div class="day-one-post-tags">
+              <span class="day-one-tag">#DeFi</span>
+              <span class="day-one-tag">#BuildInPublic</span>
+              <span class="day-one-tag">#Web3</span>
+              <span class="day-one-tag">#Founder</span>
+            </div>
+          </div>
+          <div class="day-one-score-row">
+            <span class="day-one-score-label">Investor Signal Score</span>
+            <span class="day-one-score-before">22</span>
+            <span class="day-one-score-arrow">→</span>
+            <span class="day-one-score-after">29</span>
+            <span class="day-one-score-delta">+7 today</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- PROOF — BEFORE / AFTER -->
+<section class="section" id="proof">
+  <div class="section-inner">
+    <div class="s-marker reveal">
+      <span class="s-num">02</span>
+      <span class="s-line"></span>
+      <span class="s-label">Evidence — Not Testimonials</span>
+    </div>
+    <h2 class="s-title reveal">Real founders.<br><em>Real numbers.</em><br><strong>Before and after.</strong></h2>
+    <div class="proof-before-after reveal">
+      <div class="ba-card">
+        <div class="ba-label">Founder 01 — Week 1 → Week 4</div>
+        <div class="ba-name">Adaeze O.</div>
+        <div class="ba-role">Lagos · DeFi Infrastructure · Pre-seed</div>
+        <div class="ba-before">
+          <div class="ba-before-lbl">Before RayseOS</div>
+          <div class="ba-before-val">340 followers. 0 inbound investor contact. Sending cold emails that went unanswered. Signal Score: 18.</div>
+        </div>
+        <div class="ba-after">
+          <div class="ba-after-lbl">After 30 Days</div>
+          <div class="ba-after-val">1,240 followers. 3 investor DMs. 2 calls booked. Signal Score: 67. One investor found her from a thread she posted on Day 8.</div>
+        </div>
+        <p class="ba-quote">"I stopped feeling like I was begging. That shift happened faster than I expected."</p>
+      </div>
+      <div class="ba-card">
+        <div class="ba-label">Founder 02 — Week 1 → Week 4</div>
+        <div class="ba-name">Kofi A.</div>
+        <div class="ba-role">Accra · B2B SaaS · MVP Stage</div>
+        <div class="ba-before">
+          <div class="ba-before-lbl">Before RayseOS</div>
+          <div class="ba-before-val">No content strategy. Posted once a week, maybe. No waitlist. Signal Score: 24. Spent 3 hours deciding what to post and posted nothing.</div>
+        </div>
+        <div class="ba-after">
+          <div class="ba-after-lbl">After 30 Days</div>
+          <div class="ba-after-val">84 waitlist signups. 6.4% engagement rate. 500+ post reach per day. Signal Score: 61. Posted every day. Total time: 20 minutes per day.</div>
+        </div>
+        <p class="ba-quote">"The system removed the decision fatigue. I just opened it and executed."</p>
+      </div>
+      <div class="ba-card">
+        <div class="ba-label">Founder 03 — Week 1 → Week 4</div>
+        <div class="ba-name">Tunde M.</div>
+        <div class="ba-role">Nigeria · Creator Economy · Idea Stage</div>
+        <div class="ba-before">
+          <div class="ba-before-lbl">Before RayseOS</div>
+          <div class="ba-before-val">Idea stage, no product yet. Felt like he couldn't raise without a working product. Score: 15. No distribution. No public presence.</div>
+        </div>
+        <div class="ba-after">
+          <div class="ba-after-lbl">After 30 Days</div>
+          <div class="ba-after-val">212 followers gained. 1 angel investor intro from Twitter. Score: 52. Raised a £15K friends & family round before shipping a single line of code.</div>
+        </div>
+        <p class="ba-quote">"RayseOS taught me that distribution is the product at the idea stage."</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- PUBLIC PROOF LOOP — inbound messages -->
+<section class="proof-loop-section">
+  <div class="proof-loop-inner">
+    <div class="s-marker reveal">
+      <span class="s-num">03</span>
+      <span class="s-line"></span>
+      <span class="s-label">The Shift in Action</span>
+    </div>
+    <h2 class="s-title reveal" style="margin-bottom:16px">When the dynamic flips,<br><em>your inbox changes.</em></h2>
+    <p class="reveal" style="font-size:15px;color:var(--off);font-weight:300;max-width:560px;line-height:1.75;margin-bottom:48px">These are the kinds of messages founders receive after 3–4 weeks of consistent execution. Not from cold pitching. From being visible.</p>
+
+    <div class="inbound-mock reveal">
+      <div class="inbound-mock-label">Inbound Investor Messages — Week 3–4</div>
+      <div class="inbound-message">
+        <div class="inbound-avatar">JK</div>
+        <div class="inbound-body">
+          <div class="inbound-sender">James K. · Partner, Catalyst Fund</div>
+          <div class="inbound-text">Hey — been following your build in public for a few weeks. The problem you're solving is real, I've seen it firsthand. Would love to have a 30-min call this week if you're open to it.</div>
+        </div>
+        <div class="inbound-badge">Inbound</div>
+      </div>
+      <div class="inbound-message">
+        <div class="inbound-avatar">SA</div>
+        <div class="inbound-body">
+          <div class="inbound-sender">Sarah A. · Angel Investor</div>
+          <div class="inbound-text">Your thread on Day 8 about the liquidation problem stopped my scroll. I've been looking for founders in this space — are you raising right now?</div>
+        </div>
+        <div class="inbound-badge">Inbound</div>
+      </div>
+      <div class="inbound-message">
+        <div class="inbound-avatar">MO</div>
+        <div class="inbound-body">
+          <div class="inbound-sender">Michael O. · VC Associate, Horizon Ventures</div>
+          <div class="inbound-text">Forwarded your profile to our general partner. The consistency of your build log is impressive — most pre-seed founders we see haven't done the work you've already done publicly.</div>
+        </div>
+        <div class="inbound-badge">Inbound</div>
+      </div>
+    </div>
+
+    <div class="proof-loop-grid reveal" style="margin-top:64px">
+      <div class="proof-card">
+        <p class="proof-text">"I went from zero visibility to three investor calls in 30 days. Not because I pitched harder. Because I stopped pitching and started showing up."</p>
+        <div class="proof-attr">
+          <div class="proof-name">Adaeze O.</div>
+          <div class="proof-role">Founder · Lagos · Pre-seed</div>
+        </div>
+      </div>
+      <div class="proof-card">
+        <p class="proof-text">"The Signal Score is addictive. Every morning I'm not asking 'will someone fund me?' I'm asking 'what moves my score today?' That reframe is worth everything."</p>
+        <div class="proof-attr">
+          <div class="proof-name">Kofi A.</div>
+          <div class="proof-role">Founder · Accra · MVP Stage</div>
+        </div>
+      </div>
+      <div class="proof-card">
+        <p class="proof-text">"I raised a friends & family round before I shipped a line of code. Distribution built the belief. RayseOS built the distribution."</p>
+        <div class="proof-attr">
+          <div class="proof-name">Tunde M.</div>
+          <div class="proof-role">Solo Founder · Nigeria · Idea Stage</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- STATEMENT -->
+<section class="section statement-section">
+  <div class="section-inner">
+    <div class="statement-left reveal">
+      <div class="s-marker" style="margin-bottom:40px">
+        <span class="s-num">04</span>
+        <span class="s-line"></span>
+        <span class="s-label">The Problem</span>
+      </div>
+      <h2 class="statement-title">The game was rigged<br><em>against you.</em></h2>
+    </div>
+    <div class="statement-right reveal rd1">
+      <p class="statement-body">Cold pitching doesn't work because it signals the wrong thing. When you chase investors, you tell them you need them more than they need you. <strong>That dynamic kills deals before they start.</strong></p>
+      <div class="statement-blade"></div>
+      <p class="statement-body">The founders who raise aren't the ones with the best decks. They're the ones investors have been watching for weeks — building in public, generating real signals, showing up every day. By the time they met, the investor was already sold.</p>
+      <p class="statement-body" style="margin-bottom:0"><strong>RayseOS builds that presence systematically. In 30 days.</strong></p>
+    </div>
+  </div>
+</section>
+
+<!-- PILLARS -->
+<section class="section" id="shift">
+  <div class="section-inner" style="padding-bottom:0">
+    <div class="s-marker reveal"><span class="s-num">05</span><span class="s-line"></span><span class="s-label">The Shift</span></div>
+    <h2 class="s-title reveal">Three things change<br>when you use RayseOS.</h2>
+  </div>
+  <div class="pillars-grid reveal">
+    <div class="pillar">
+      <span class="pillar-num">01 — Relief</span>
+      <div class="pillar-title">You have a system now.</div>
+      <p class="pillar-desc">No more staring at a blank screen. Every morning the Command Center tells you exactly what to do. The plan exists. You execute it. 20 minutes. Done.</p>
+    </div>
+    <div class="pillar">
+      <span class="pillar-num">02 — Validation</span>
+      <div class="pillar-title">You are worth noticing.</div>
+      <p class="pillar-desc">The Signal Score makes your momentum visible — to yourself and to the market. Watching it climb from 24 to 67 isn't just satisfying. It's proof that what you're building matters.</p>
+    </div>
+    <div class="pillar">
+      <span class="pillar-num">03 — Control</span>
+      <div class="pillar-title">You decide how this plays out.</div>
+      <p class="pillar-desc">You stop waiting for someone to discover you. You build the presence that makes discovery inevitable. The investor who reaches out first — that's the dynamic you're building toward.</p>
+    </div>
+  </div>
+</section>
+
+<!-- HOW IT WORKS -->
+<section class="section" id="how">
+  <div class="section-inner" style="padding-bottom:0">
+    <div class="s-marker reveal"><span class="s-num">06</span><span class="s-line"></span><span class="s-label">The Protocol</span></div>
+    <h2 class="s-title reveal">Simple.<br>Deliberate.<br><em>Effective.</em></h2>
+  </div>
+  <div class="how-rows reveal">
+    <div class="how-row">
+      <div class="how-row-num"><span>I</span></div>
+      <div class="how-row-left"><div class="how-row-tag">Step 01</div><div class="how-row-title">Tell us about your startup</div></div>
+      <div class="how-row-right"><p class="how-row-desc">Name, pitch, industry, audience, stage, funding goal. 3 minutes. RayseOS learns exactly what you're building and who you need to reach.</p></div>
+    </div>
+    <div class="how-row">
+      <div class="how-row-num"><span>II</span></div>
+      <div class="how-row-left"><div class="how-row-tag">Step 02</div><div class="how-row-title">Receive your 30-day plan</div></div>
+      <div class="how-row-right"><p class="how-row-desc">AI generates a personalized execution roadmap — weekly narrative arcs, daily missions, platform strategy, and ready-to-use content. Specific to your startup. Nothing generic.</p></div>
+    </div>
+    <div class="how-row">
+      <div class="how-row-num"><span>III</span></div>
+      <div class="how-row-left"><div class="how-row-tag">Step 03</div><div class="how-row-title">Execute. Watch the score climb.</div></div>
+      <div class="how-row-right"><p class="how-row-desc">Open the Command Center every morning. Follow today's mission. Generate your content. Post it. The Investor Signal Score rises. Investors notice. The dynamic shifts.</p></div>
+    </div>
+  </div>
+</section>
+
+<!-- SCORE SECTION -->
+<div class="score-section-wrap" id="score">
+  <div class="score-section-inner">
+    <div class="reveal">
+      <span class="score-giant" id="scoreNum">72</span>
+      <div class="score-meta">// Investor Signal Score</div>
+      <p class="score-copy">One number that tells you exactly how fundable you look right now — and precisely what to execute today to raise it.</p>
+      <button class="score-social" onclick="shareScore()">
+        <span class="score-social-text">Share your score · "What's yours?"</span>
+        <span class="score-social-icon">↗</span>
+      </button>
+    </div>
+    <div class="score-breakdown reveal rd1">
+      <div class="sb-row"><span class="sb-name">Consistency</span><div class="sb-bar"><div class="sb-fill" style="width:85%"></div></div><span class="sb-val">85</span></div>
+      <div class="sb-row"><span class="sb-name">Engagement</span><div class="sb-bar"><div class="sb-fill" style="width:64%"></div></div><span class="sb-val">64</span></div>
+      <div class="sb-row"><span class="sb-name">Proof Signals</span><div class="sb-bar"><div class="sb-fill" style="width:58%"></div></div><span class="sb-val">58</span></div>
+      <div class="sb-row"><span class="sb-name">Growth Rate</span><div class="sb-bar"><div class="sb-fill" style="width:72%"></div></div><span class="sb-val">72</span></div>
+      <div class="sb-row"><span class="sb-name">Exec Streak</span><div class="sb-bar"><div class="sb-fill" style="width:90%"></div></div><span class="sb-val">90</span></div>
+    </div>
+  </div>
+</div>
+
+<!-- SYSTEM -->
+<section class="section" id="system">
+  <div class="section-inner" style="padding-bottom:0">
+    <div class="s-marker reveal"><span class="s-num">07</span><span class="s-line"></span><span class="s-label">The Stack</span></div>
+    <h2 class="s-title reveal" style="margin-bottom:56px">Everything you need.<br><em>Nothing you don't.</em></h2>
+  </div>
+  <div class="signal-grid reveal">
+    <div class="signal-card">
+      <div class="signal-card-label">Daily Command Center</div>
+      <div class="signal-card-title">Today's mission. No ambiguity.</div>
+      <p class="signal-card-desc">One screen. Today's mission, 5 tasks, AI-generated content ready to post. You open it. You know what to do. 20 minutes. Repeat for 30 days.</p>
+    </div>
+    <div class="signal-card">
+      <div class="signal-card-label">Content Generation Engine</div>
+      <div class="signal-card-title">Your voice. Your audience. One click.</div>
+      <p class="signal-card-desc">Platform-specific posts, threads, and scripts with your startup context baked in. Not templates. Content that sounds like you — because it was built around you.</p>
+    </div>
+    <div class="signal-card">
+      <div class="signal-card-label">Adaptive Strategy</div>
+      <div class="signal-card-title">The plan evolves as you do.</div>
+      <p class="signal-card-desc">What's working gets amplified. What isn't gets replaced. Your 30-day system adjusts weekly based on real traction data, not assumptions.</p>
+    </div>
+  </div>
+</section>
+
+<!-- FINAL CTA -->
+<section class="cta-section" id="cta">
+  <div class="cta-inner">
+    <div class="cta-left reveal">
+      <h2 class="cta-headline">The room is<br><strong>already</strong><em>looking.</em></h2>
+      <span class="cta-blade"></span>
+      <p class="cta-sub">Join the waitlist. Be first in when we launch. Early founders get lifetime discounted access and direct input into what gets built next.</p>
+    </div>
+    <div class="cta-right reveal rd1">
+      <div class="cta-form-label">Secure your position</div>
+      <div class="cta-form" id="footerForm">
+        <input type="email" class="wl-input" id="footerEmail" placeholder="your@email.com" autocomplete="email" autocapitalize="none" autocorrect="off" inputmode="email" />
+        <button class="wl-btn" id="footerBtn" onclick="joinWaitlist('footer')">I'm Ready →</button>
+      </div>
+      <div class="wl-error" id="footerError">Enter a valid email address.</div>
+      <div class="cta-meta" id="footerCount"><strong>140+</strong> founders already waiting</div>
+      <div class="cta-promise">
+        <p class="cta-promise-text">"Execute for 30 days. Investors start finding you." — That's not a promise. That's the system working exactly as designed.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-word">Rayse<em>OS</em></div>
+  <div class="footer-copy">© 2026 RayseOS · All rights reserved</div>
+  <nav class="footer-links">
+    <a href="privacy.html" class="footer-link">Privacy</a>
+    <a href="terms.html" class="footer-link">Terms</a>
+    <a href="https://twitter.com/Mani_chukk" target="_blank" rel="noopener" class="footer-link">Twitter</a>
+  </nav>
+</footer>
+
+<script>
+// ── LOOPS API KEY — replace this value with your real key ──
+
+let count = 140, menuOpen = false;
+
+function isValidEmail(email) {
+  return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email.trim());
+}
+
+async function joinWaitlist(form) {
+  const emailId  = form === 'hero' ? 'heroEmail'  : 'footerEmail';
+  const btnId    = form === 'hero' ? 'heroBtn'    : 'footerBtn';
+  const errorId  = form === 'hero' ? 'heroError'  : 'footerError';
+  const countId  = form === 'hero' ? 'heroCount'  : 'footerCount';
+
+  const emailEl  = document.getElementById(emailId);
+  const btnEl    = document.getElementById(btnId);
+  const errorEl  = document.getElementById(errorId);
+  const countEl  = document.getElementById(countId);
+
+  const email = emailEl.value.trim();
+
+  // Clear previous error
+  errorEl.classList.remove('visible');
+
+  if (!isValidEmail(email)) {
+    errorEl.textContent = 'Enter a valid email address.';
+    errorEl.classList.add('visible');
+    emailEl.focus();
+    return;
+  }
+
+  // Loading state
+  btnEl.textContent = 'Sending…';
+  btnEl.classList.add('loading');
+
+  try {
+    const res = await fetch('/api/waitlist', {
+  method: 'POST',
+  headers: { 'Content-Type': 'application/json' },
+  body: JSON.stringify({ email: email, source: 'rayseos-waitlist-' + form })
+});
+
+    if (res.ok) {
+      // Success
+      btnEl.textContent = "You're in \u2713";
+      btnEl.classList.remove('loading');
+      btnEl.classList.add('success');
+      emailEl.value = '';
+      emailEl.disabled = true;
+      count++;
+      const str = `<strong>${count}+</strong> founders`;
+      document.getElementById('heroCount').innerHTML  = str + ' already on the waitlist';
+      document.getElementById('footerCount').innerHTML = str + ' already waiting';
+    } else {
+      const data = await res.json().catch(() => ({}));
+      // Handle duplicate contact gracefully
+      if (res.status === 409 || (data.message && data.message.toLowerCase().includes('already'))) {
+        btnEl.textContent = "Already in \u2713";
+        btnEl.classList.remove('loading');
+        btnEl.classList.add('success');
+        emailEl.value = '';
+        emailEl.disabled = true;
+      } else {
+        throw new Error(data.message || 'Request failed');
+      }
+    }
+  } catch (err) {
+    btnEl.textContent = "I'm Ready \u2192";
+    btnEl.classList.remove('loading');
+    errorEl.textContent = 'Something went wrong. Try again.';
+    errorEl.classList.add('visible');
+    console.error('Loops error:', err);
+  }
+}
+
+/* ENTER KEY */
+['heroEmail', 'footerEmail'].forEach(id => {
+  const el = document.getElementById(id);
+  if (el) el.addEventListener('keydown', e => {
+    if (e.key === 'Enter') { e.preventDefault(); joinWaitlist(id.includes('hero') ? 'hero' : 'footer'); }
+  });
+});
+
+/* SHARE SCORE */
+function shareScore() {
+  const text = 'My RayseOS Investor Signal Score is 72/100. The system that tracks how fundable you look — and tells you exactly what to do to raise it. What\'s yours? rayseos.io';
+  if (navigator.share) {
+    navigator.share({ text, url: 'https://rayseos.io' }).catch(() => {});
+  } else {
+    window.open('https://twitter.com/intent/tweet?text=' + encodeURIComponent(text), '_blank');
+  }
+}
+
+/* NAV */
+const nav = document.getElementById('mainNav');
+window.addEventListener('scroll', () => {
+  nav.classList.toggle('scrolled', (window.scrollY || window.pageYOffset) > 60);
+}, { passive: true });
+
+/* MENU */
+function toggleMenu() {
+  menuOpen = !menuOpen;
+  document.getElementById('mobileMenu').classList.toggle('open', menuOpen);
+  document.getElementById('hamburger').classList.toggle('open', menuOpen);
+  document.body.style.overflow = menuOpen ? 'hidden' : '';
+}
+function closeMenu() {
+  menuOpen = false;
+  document.getElementById('mobileMenu').classList.remove('open');
+  document.getElementById('hamburger').classList.remove('open');
+  document.body.style.overflow = '';
+}
+document.addEventListener('keydown', e => { if (e.key === 'Escape') closeMenu(); });
+
+/* SMOOTH SCROLL */
+document.querySelectorAll('a[href^="#"]').forEach(a => {
+  a.addEventListener('click', e => {
+    const href = a.getAttribute('href');
+    if (href === '#') return;
+    const t = document.querySelector(href);
+    if (t) {
+      e.preventDefault();
+      window.scrollTo({ top: t.getBoundingClientRect().top + window.scrollY - nav.offsetHeight - 8, behavior: 'smooth' });
+      closeMenu();
+    }
+  });
+});
+
+/* REVEAL */
+const io = new IntersectionObserver(entries => {
+  entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add('visible'); io.unobserve(e.target); } });
+}, { threshold: 0.05, rootMargin: '0px 0px -40px 0px' });
+document.querySelectorAll('.reveal').forEach(el => io.observe(el));
+
+/* SCORE COUNTER */
+function animCount(el, target, duration) {
+  const start = performance.now();
+  const update = now => {
+    const p = Math.min((now - start) / duration, 1);
+    const ease = 1 - Math.pow(1 - p, 3);
+    el.textContent = Math.floor(ease * target);
+    if (p < 1) requestAnimationFrame(update);
+    else el.textContent = target;
+  };
+  requestAnimationFrame(update);
+}
+const scoreEl = document.getElementById('scoreNum');
+const sObs = new IntersectionObserver(entries => {
+  entries.forEach(e => { if (e.isIntersecting) { animCount(scoreEl, 72, 1800); sObs.unobserve(e.target); } });
+}, { threshold: 0.3 });
+if (scoreEl) sObs.observe(scoreEl);
+
+/* BARS */
+const bObs = new IntersectionObserver(entries => {
+  entries.forEach(e => {
+    if (e.isIntersecting) {
+      e.target.querySelectorAll('.sb-fill').forEach(f => {
+        const w = f.style.width; f.style.width = '0';
+        setTimeout(() => { f.style.transition = 'width 1.2s ease'; f.style.width = w; }, 100);
+      });
+      bObs.unobserve(e.target);
+    }
+  });
+}, { threshold: 0.2 });
+document.querySelectorAll('.score-breakdown').forEach(el => bObs.observe(el));
+</script>
+</body>
+</html>

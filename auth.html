@@ -1,0 +1,360 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="theme-color" content="#05050A">
+<meta name="robots" content="noindex">
+<title>RayseOS — Sign In</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;0,700;1,300;1,400;1,500&family=Outfit:wght@200;300;400;500;600&family=DM+Mono:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#05050A;--bg2:#07070D;--surface:#0A0A12;--surface2:#0E0E18;
+  --border:rgba(255,255,255,0.05);--border2:rgba(255,255,255,0.09);
+  --white:#F2F1EE;--off:rgba(242,241,238,0.55);--faint:rgba(242,241,238,0.22);
+  --blade:#E8C97D;--blade-dim:rgba(232,201,125,0.1);--blade-lt:#F0D99A;
+  --green:#7ecb9b;--red:#c97d7d;
+  --serif:'Cormorant Garamond',Georgia,serif;
+  --sans:'Outfit',-apple-system,sans-serif;
+  --mono:'DM Mono',monospace;
+}
+html{-webkit-text-size-adjust:100%}
+body{background:var(--bg);color:var(--white);font-family:var(--sans);font-size:15px;line-height:1.6;font-weight:300;min-height:100vh;overflow-x:hidden;-webkit-font-smoothing:antialiased;display:flex;flex-direction:column}
+body::before{content:'';position:fixed;inset:0;background:radial-gradient(ellipse at 50% 0%,rgba(232,201,125,0.04) 0%,transparent 60%);pointer-events:none;z-index:0}
+body::after{content:'';position:fixed;inset:0;background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 512 512' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='g'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23g)' opacity='0.04'/%3E%3C/svg%3E");pointer-events:none;z-index:1;opacity:0.5}
+nav,main,footer{position:relative;z-index:2}
+@keyframes fadeUp{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:translateY(0)}}
+@keyframes fadeIn{from{opacity:0}to{opacity:1}}
+@keyframes shake{0%,100%{transform:translateX(0)}20%,60%{transform:translateX(-5px)}40%,80%{transform:translateX(5px)}}
+@keyframes spin{to{transform:rotate(360deg)}}
+
+nav{display:flex;align-items:center;justify-content:space-between;padding:20px 56px;border-bottom:1px solid var(--border);flex-shrink:0}
+.nav-wordmark{font-family:var(--serif);font-size:20px;font-weight:500;letter-spacing:0.04em;color:var(--white);text-decoration:none}
+.nav-wordmark em{font-style:normal;color:var(--blade)}
+.nav-back{font-family:var(--mono);font-size:11px;font-weight:300;color:var(--faint);text-decoration:none;letter-spacing:0.08em;text-transform:uppercase;transition:color 0.25s;display:flex;align-items:center;gap:8px}
+.nav-back::before{content:'←'}
+.nav-back:hover{color:var(--white)}
+
+.page{flex:1;display:grid;grid-template-columns:1fr 1fr;min-height:calc(100vh - 65px)}
+
+/* LEFT PANEL */
+.left{
+  border-right:1px solid var(--border);
+  padding:72px 64px;
+  display:flex;flex-direction:column;justify-content:space-between;
+  position:relative;overflow:hidden;
+}
+.left::before{content:'';position:absolute;top:-100px;right:-100px;width:400px;height:400px;background:radial-gradient(ellipse,rgba(232,201,125,0.05) 0%,transparent 70%);pointer-events:none}
+.left-content{position:relative;z-index:1}
+.left-label{font-family:var(--mono);font-size:10px;font-weight:300;color:var(--blade);text-transform:uppercase;letter-spacing:0.18em;margin-bottom:32px;display:flex;align-items:center;gap:10px}
+.left-label::before{content:'';width:24px;height:1px;background:var(--blade);opacity:0.5}
+.left-headline{font-family:var(--serif);font-size:clamp(36px,4vw,52px);font-weight:300;line-height:1.05;letter-spacing:-0.01em;margin-bottom:24px}
+.left-headline strong{font-weight:600;display:block}
+.left-headline em{font-style:italic;color:var(--blade)}
+.left-desc{font-size:15px;color:var(--off);line-height:1.8;font-weight:300;max-width:340px;margin-bottom:48px}
+.left-blade{width:48px;height:1px;background:var(--blade);opacity:0.4;margin-bottom:40px}
+
+.left-stats{display:flex;gap:0;border:1px solid var(--border)}
+.left-stat{flex:1;padding:20px;border-right:1px solid var(--border);transition:background 0.2s}
+.left-stat:last-child{border-right:none}
+.left-stat:hover{background:rgba(232,201,125,0.03)}
+.left-stat-val{font-family:var(--serif);font-size:32px;font-weight:600;color:var(--blade);line-height:1;margin-bottom:4px}
+.left-stat-lbl{font-family:var(--mono);font-size:9px;font-weight:300;color:var(--faint);text-transform:uppercase;letter-spacing:0.12em}
+
+.left-quote{margin-top:40px;padding-left:20px;border-left:1px solid rgba(232,201,125,0.3)}
+.left-quote-text{font-family:var(--serif);font-size:16px;font-style:italic;font-weight:300;color:var(--off);line-height:1.7;margin-bottom:12px}
+.left-quote-attr{font-family:var(--mono);font-size:9px;color:var(--blade);text-transform:uppercase;letter-spacing:0.1em;opacity:0.6}
+
+.left-footer{font-family:var(--mono);font-size:9px;color:rgba(242,241,238,0.12);text-transform:uppercase;letter-spacing:0.1em}
+
+/* RIGHT PANEL */
+.right{display:flex;align-items:center;justify-content:center;padding:56px 48px}
+.auth-box{width:100%;max-width:400px;animation:fadeUp 0.5s ease 0.1s both}
+
+.auth-tabs{display:flex;gap:0;border-bottom:1px solid var(--border);margin-bottom:36px}
+.auth-tab{flex:1;padding:12px 0;background:transparent;border:none;font-family:var(--mono);font-size:11px;font-weight:300;color:var(--faint);letter-spacing:0.1em;text-transform:uppercase;cursor:pointer;transition:color 0.2s;border-bottom:1px solid transparent;margin-bottom:-1px}
+.auth-tab.active{color:var(--blade);border-bottom-color:var(--blade)}
+.auth-tab:hover:not(.active){color:var(--off)}
+
+.auth-panel{display:none}
+.auth-panel.active{display:block;animation:fadeUp 0.3s ease both}
+
+.auth-title{font-family:var(--serif);font-size:32px;font-weight:400;letter-spacing:-0.01em;margin-bottom:6px}
+.auth-sub{font-size:13px;color:var(--off);font-weight:300;margin-bottom:32px;line-height:1.6}
+
+/* GOOGLE */
+.google-btn{width:100%;padding:12px 16px;background:rgba(255,255,255,0.04);border:1px solid var(--border2);color:var(--white);font-family:var(--sans);font-size:14px;font-weight:300;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:10px;transition:all 0.2s;margin-bottom:24px;-webkit-appearance:none;appearance:none;-webkit-tap-highlight-color:transparent}
+.google-btn:hover{background:rgba(255,255,255,0.07);border-color:rgba(255,255,255,0.14)}
+.google-icon{width:18px;height:18px;flex-shrink:0}
+
+.divider{display:flex;align-items:center;gap:14px;margin-bottom:24px}
+.divider-line{flex:1;height:1px;background:var(--border)}
+.divider-text{font-family:var(--mono);font-size:9px;color:rgba(242,241,238,0.18);text-transform:uppercase;letter-spacing:0.12em;white-space:nowrap}
+
+/* FIELDS */
+.field{margin-bottom:20px}
+.field-label{font-family:var(--mono);font-size:9px;font-weight:300;text-transform:uppercase;letter-spacing:0.14em;color:var(--faint);margin-bottom:8px;display:flex;align-items:center;justify-content:space-between}
+.field-input{width:100%;padding:12px 0;background:transparent;border:none;border-bottom:1px solid rgba(242,241,238,0.14);color:var(--white);font-family:var(--sans);font-size:15px;font-weight:300;outline:none;transition:border-color 0.25s;-webkit-appearance:none;appearance:none}
+.field-input:focus{border-bottom-color:var(--blade)}
+.field-input::placeholder{color:rgba(242,241,238,0.18)}
+.field-input.error{border-bottom-color:var(--red);animation:shake 0.4s ease}
+@media(max-width:768px){.field-input{font-size:16px}}
+
+.field-pw{position:relative}
+.field-pw .field-input{padding-right:32px}
+.pw-toggle{position:absolute;right:0;top:50%;transform:translateY(-50%);background:none;border:none;cursor:pointer;font-family:var(--mono);font-size:10px;color:var(--faint);text-transform:uppercase;letter-spacing:0.08em;transition:color 0.2s;padding:4px;-webkit-tap-highlight-color:transparent}
+.pw-toggle:hover{color:var(--blade)}
+
+.forgot{font-family:var(--mono);font-size:9px;color:rgba(232,201,125,0.5);text-transform:uppercase;letter-spacing:0.1em;text-decoration:none;transition:color 0.2s}
+.forgot:hover{color:var(--blade)}
+
+.field-error{font-family:var(--mono);font-size:9px;color:var(--red);margin-top:5px;display:none}
+.field-error.visible{display:block}
+
+.form-alert{padding:10px 14px;border:1px solid;font-family:var(--mono);font-size:10px;margin-bottom:16px;display:none;line-height:1.5}
+.form-alert.visible{display:block}
+.form-alert.error{border-color:rgba(201,125,125,0.3);background:rgba(201,125,125,0.06);color:var(--red)}
+.form-alert.success{border-color:rgba(126,203,155,0.3);background:rgba(126,203,155,0.06);color:var(--green)}
+
+.submit-btn{width:100%;padding:13px 0;background:transparent;border:1px solid var(--blade);color:var(--blade);font-family:var(--mono);font-size:11px;font-weight:400;letter-spacing:0.12em;text-transform:uppercase;cursor:pointer;transition:all 0.25s;margin-top:24px;display:flex;align-items:center;justify-content:center;gap:10px;-webkit-appearance:none;appearance:none;-webkit-tap-highlight-color:transparent}
+.submit-btn:hover:not(:disabled){background:var(--blade);color:#000}
+.submit-btn:active:not(:disabled){opacity:0.85}
+.submit-btn:disabled{opacity:0.35;cursor:not-allowed}
+.submit-btn.loading{pointer-events:none}
+.btn-spinner{width:14px;height:14px;border-radius:50%;border:1.5px solid rgba(232,201,125,0.3);border-top-color:var(--blade);animation:spin 0.7s linear infinite;display:none;flex-shrink:0}
+.submit-btn.loading .btn-spinner{display:block}
+.submit-btn.loading .btn-text{display:none}
+
+.switch-note{font-family:var(--mono);font-size:10px;color:var(--faint);text-align:center;margin-top:20px;letter-spacing:0.04em}
+.switch-note a{color:rgba(232,201,125,0.6);text-decoration:none;transition:color 0.2s}
+.switch-note a:hover{color:var(--blade)}
+
+.terms-note{font-family:var(--mono);font-size:9px;color:rgba(242,241,238,0.15);text-align:center;margin-top:14px;line-height:1.7;letter-spacing:0.02em}
+.terms-note a{color:rgba(232,201,125,0.4);text-decoration:none;transition:color 0.2s}
+.terms-note a:hover{color:var(--blade)}
+
+/* SUCCESS */
+.auth-success{display:none;text-align:center;padding:32px 0;animation:fadeUp 0.4s ease both}
+.auth-success.visible{display:block}
+.success-mark{font-family:var(--serif);font-size:48px;font-weight:300;color:var(--blade);line-height:1;margin-bottom:16px}
+.success-title{font-family:var(--serif);font-size:28px;font-weight:400;margin-bottom:8px}
+.success-desc{font-size:13px;color:var(--off);line-height:1.65;font-weight:300;margin-bottom:28px}
+.success-btn{display:inline-block;padding:12px 32px;border:1px solid var(--blade);font-family:var(--mono);font-size:11px;color:var(--blade);text-decoration:none;letter-spacing:0.1em;text-transform:uppercase;transition:all 0.2s}
+.success-btn:hover{background:var(--blade);color:#000}
+
+footer{border-top:1px solid var(--border);padding:20px 56px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px;background:var(--bg2);flex-shrink:0;position:relative;z-index:2}
+.footer-word{font-family:var(--serif);font-size:14px;font-weight:400;color:rgba(242,241,238,0.2)}
+.footer-word em{font-style:normal;color:rgba(232,201,125,0.35)}
+.footer-links{display:flex;gap:20px}
+.footer-link{font-family:var(--mono);font-size:10px;color:rgba(242,241,238,0.18);text-decoration:none;text-transform:uppercase;letter-spacing:0.08em;transition:color 0.2s}
+.footer-link:hover{color:var(--blade)}
+
+@media(max-width:800px){
+  nav{padding:16px 20px}
+  .page{grid-template-columns:1fr}
+  .left{display:none}
+  .right{padding:40px 24px}
+  footer{padding:16px 20px;justify-content:center}
+  .footer-links{justify-content:center}
+}
+</style>
+</head>
+<body>
+<nav>
+  <a href="index.html" class="nav-wordmark">Rayse<em>OS</em></a>
+  <a href="index.html" class="nav-back">Back to home</a>
+</nav>
+<div class="page">
+  <div class="left">
+    <div class="left-content">
+      <div class="left-label">Fundraising Execution System</div>
+      <h2 class="left-headline">
+        The room is<br>
+        <strong>already</strong>
+        <em>looking.</em>
+      </h2>
+      <p class="left-desc">Join founders who stopped chasing investors and started being found. The system works. You just have to show up.</p>
+      <div class="left-blade"></div>
+      <div class="left-stats">
+        <div class="left-stat"><div class="left-stat-val">30</div><div class="left-stat-lbl">Day System</div></div>
+        <div class="left-stat"><div class="left-stat-val">5</div><div class="left-stat-lbl">Tasks / Day</div></div>
+        <div class="left-stat"><div class="left-stat-val">100</div><div class="left-stat-lbl">Max Score</div></div>
+      </div>
+      <div class="left-quote">
+        <p class="left-quote-text">"I stopped feeling like I was begging. That shift happened faster than I expected."</p>
+        <div class="left-quote-attr">Adaeze O. · Lagos · Pre-seed</div>
+      </div>
+    </div>
+    <div class="left-footer">© 2026 RayseOS · rayseos.io</div>
+  </div>
+  <div class="right">
+    <div class="auth-box">
+      <div class="auth-tabs">
+        <button class="auth-tab active" id="tab-signin" onclick="switchTab('signin')">Sign In</button>
+        <button class="auth-tab" id="tab-signup" onclick="switchTab('signup')">Create Account</button>
+      </div>
+
+      <!-- SIGN IN -->
+      <div class="auth-panel active" id="panel-signin">
+        <div class="auth-title">Welcome back.</div>
+        <p class="auth-sub">Sign in to continue your 30-day execution plan.</p>
+        <div class="form-alert" id="signin-alert"></div>
+        <button class="google-btn" onclick="handleGoogle('signin')">
+          <svg class="google-icon" viewBox="0 0 24 24"><path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4"/><path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"/><path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z" fill="#FBBC05"/><path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335"/></svg>
+          Continue with Google
+        </button>
+        <div class="divider"><div class="divider-line"></div><div class="divider-text">or</div><div class="divider-line"></div></div>
+        <form onsubmit="handleSignin(event)" novalidate>
+          <div class="field">
+            <div class="field-label">Email Address</div>
+            <input type="email" class="field-input" id="signin-email" placeholder="your@email.com" autocomplete="email" autocapitalize="none" autocorrect="off" inputmode="email"/>
+            <div class="field-error" id="signin-email-err">Please enter a valid email.</div>
+          </div>
+          <div class="field">
+            <div class="field-label"><span>Password</span><a href="#" class="forgot">Forgot?</a></div>
+            <div class="field-pw">
+              <input type="password" class="field-input" id="signin-pw" placeholder="••••••••" autocomplete="current-password"/>
+              <button type="button" class="pw-toggle" onclick="togglePw('signin-pw',this)">Show</button>
+            </div>
+            <div class="field-error" id="signin-pw-err">Please enter your password.</div>
+          </div>
+          <button type="submit" class="submit-btn" id="signin-btn">
+            <span class="btn-spinner"></span>
+            <span class="btn-text">Sign In →</span>
+          </button>
+        </form>
+        <p class="switch-note">No account? <a href="#" onclick="switchTab('signup');return false;">Create one free</a></p>
+      </div>
+
+      <!-- SIGN UP -->
+      <div class="auth-panel" id="panel-signup">
+        <div class="auth-success" id="signup-success">
+          <div class="success-mark">✦</div>
+          <div class="success-title">You're in.</div>
+          <p class="success-desc">Account created. Your 30-day execution plan is ready to build.</p>
+          <a href="app.html" class="success-btn">Open Command Center →</a>
+        </div>
+        <div id="signup-form-wrap">
+          <div class="auth-title">Create account.</div>
+          <p class="auth-sub">Start your 30-day path to being found by investors.</p>
+          <div class="form-alert" id="signup-alert"></div>
+          <button class="google-btn" onclick="handleGoogle('signup')">
+            <svg class="google-icon" viewBox="0 0 24 24"><path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4"/><path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"/><path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z" fill="#FBBC05"/><path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335"/></svg>
+            Continue with Google
+          </button>
+          <div class="divider"><div class="divider-line"></div><div class="divider-text">or</div><div class="divider-line"></div></div>
+          <form onsubmit="handleSignup(event)" novalidate>
+            <div class="field">
+              <div class="field-label">Full Name</div>
+              <input type="text" class="field-input" id="signup-name" placeholder="Your name" autocomplete="name" autocapitalize="words"/>
+              <div class="field-error" id="signup-name-err">Please enter your name.</div>
+            </div>
+            <div class="field">
+              <div class="field-label">Email Address</div>
+              <input type="email" class="field-input" id="signup-email" placeholder="your@email.com" autocomplete="email" autocapitalize="none" autocorrect="off" inputmode="email"/>
+              <div class="field-error" id="signup-email-err">Please enter a valid email.</div>
+            </div>
+            <div class="field">
+              <div class="field-label">Password</div>
+              <div class="field-pw">
+                <input type="password" class="field-input" id="signup-pw" placeholder="Min. 8 characters" autocomplete="new-password"/>
+                <button type="button" class="pw-toggle" onclick="togglePw('signup-pw',this)">Show</button>
+              </div>
+              <div class="field-error" id="signup-pw-err">Password must be at least 8 characters.</div>
+            </div>
+            <button type="submit" class="submit-btn" id="signup-btn">
+              <span class="btn-spinner"></span>
+              <span class="btn-text">Create Account →</span>
+            </button>
+          </form>
+          <p class="terms-note">By creating an account you agree to our <a href="terms.html">Terms</a> and <a href="privacy.html">Privacy Policy</a>.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<footer>
+  <div class="footer-word">Rayse<em>OS</em></div>
+  <div class="footer-links">
+    <a href="privacy.html" class="footer-link">Privacy</a>
+    <a href="terms.html" class="footer-link">Terms</a>
+    <a href="https://twitter.com/Mani_chukk" target="_blank" rel="noopener" class="footer-link">Twitter</a>
+  </div>
+</footer>
+<script>
+function switchTab(tab){
+  ['signin','signup'].forEach(t=>{
+    document.getElementById('tab-'+t).classList.toggle('active',t===tab);
+    document.getElementById('panel-'+t).classList.toggle('active',t===tab);
+  });
+  document.title=tab==='signin'?'RayseOS — Sign In':'RayseOS — Create Account';
+}
+function togglePw(id,btn){
+  const i=document.getElementById(id);
+  const isText=i.type==='text';
+  i.type=isText?'password':'text';
+  btn.textContent=isText?'Show':'Hide';
+}
+function setErr(inputId,errId,show){
+  const i=document.getElementById(inputId),e=document.getElementById(errId);
+  if(show){i.classList.add('error');e.classList.add('visible');setTimeout(()=>i.classList.remove('error'),500)}
+  else{i.classList.remove('error');e.classList.remove('visible')}
+  return !show;
+}
+function showAlert(id,msg,type){
+  const el=document.getElementById(id);
+  el.textContent=msg;el.className='form-alert visible '+type;
+  setTimeout(()=>el.classList.remove('visible'),4500);
+}
+function setLoading(btnId,v){
+  const b=document.getElementById(btnId);
+  b.classList.toggle('loading',v);b.disabled=v;
+}
+async function handleSignin(e){
+  e.preventDefault();
+  const email=document.getElementById('signin-email').value.trim();
+  const pw=document.getElementById('signin-pw').value;
+  let ok=true;
+  ok=setErr('signin-email','signin-email-err',!email||!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email))&&ok;
+  ok=setErr('signin-pw','signin-pw-err',!pw)&&ok;
+  if(!ok)return;
+  setLoading('signin-btn',true);
+  await new Promise(r=>setTimeout(r,1200));
+  // TODO: supabase.auth.signInWithPassword({email,password:pw}) → window.location.href='app.html'
+  showAlert('signin-alert','Connect your auth backend to enable sign in.','error');
+  setLoading('signin-btn',false);
+}
+async function handleSignup(e){
+  e.preventDefault();
+  const name=document.getElementById('signup-name').value.trim();
+  const email=document.getElementById('signup-email').value.trim();
+  const pw=document.getElementById('signup-pw').value;
+  let ok=true;
+  ok=setErr('signup-name','signup-name-err',!name)&&ok;
+  ok=setErr('signup-email','signup-email-err',!email||!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email))&&ok;
+  ok=setErr('signup-pw','signup-pw-err',pw.length<8)&&ok;
+  if(!ok)return;
+  setLoading('signup-btn',true);
+  await new Promise(r=>setTimeout(r,1400));
+  // TODO: supabase.auth.signUp({email,password:pw,options:{data:{full_name:name}}})
+  document.getElementById('signup-form-wrap').style.display='none';
+  document.getElementById('signup-success').classList.add('visible');
+  setLoading('signup-btn',false);
+}
+function handleGoogle(form){
+  // TODO: supabase.auth.signInWithOAuth({provider:'google'})
+  showAlert(form+'-alert','Connect Supabase to enable Google auth.','error');
+}
+const p=new URLSearchParams(window.location.search);
+if(p.get('tab')==='signup')switchTab('signup');
+document.querySelectorAll('.field-input').forEach(i=>{
+  i.addEventListener('keydown',e=>{
+    if(e.key==='Enter'){const f=i.closest('form');if(f)f.dispatchEvent(new Event('submit',{cancelable:true,bubbles:true}))}
+  });
+});
+</script>
+</body>
+</html>
