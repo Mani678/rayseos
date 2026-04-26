@@ -532,7 +532,7 @@ function populateDashboard(){
     const ptag=getPtag(task.platform);
     list.innerHTML+=`<div class="task-card" id="task${id}"><div class="task-top"><span class="ptag ${ptag}">${task.platform}</span><button class="check-btn" onclick="toggleTask(${id})"><span class="checkmark">✓</span></button></div><div class="task-title">${task.title}</div><div class="gen-box" id="gen${id}"></div><button class="gen-btn" id="genbtn${id}" onclick="generateContent(${id},'${task.platform.replace(/'/g,"\\'")}','${task.title.replace(/'/g,"\\'")}','${(task.hook||'').replace(/'/g,"\\'")}','${(task.content||'').replace(/'/g,"\\'")}')">Generate Content</button></div>`;
   });
-  updateTaskCount();showScreen('dashboard');
+    updateTaskCount();setTimeout(()=>showScreen('dashboard'),100);
 }
 
 function getPtag(p){p=p.toLowerCase();if(p.includes('tiktok'))return'ptag-tiktok';if(p.includes('x')||p.includes('twitter'))return'ptag-x';if(p.includes('linkedin'))return'ptag-linkedin';if(p.includes('instagram'))return'ptag-instagram';if(p.includes('reddit'))return'ptag-reddit';return'ptag-growth'}
