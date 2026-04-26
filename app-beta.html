@@ -440,7 +440,7 @@ const _sb = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON);
 // Session guard — redirect to auth if not logged in
 let currentUser = null;
 _sb.auth.getSession().then(({ data: { session } }) => {
-  if (!session) { window.location.href = 'auth.html'; return; }
+  if (!session) { window.location.href = 'auth-beta.html'; return; }
   currentUser = session.user;
   const name = currentUser.user_metadata?.full_name || currentUser.email || '';
   const avatar = document.getElementById('db-avatar');
@@ -449,7 +449,7 @@ _sb.auth.getSession().then(({ data: { session } }) => {
 
 async function handleSignOut() {
   await _sb.auth.signOut();
-  window.location.href = 'auth.html';
+  window.location.href = 'auth-beta.html';
 }
 
 let currentStep=1,founderData={},planData=null,taskState={},insightIdx=0,insights=[];
