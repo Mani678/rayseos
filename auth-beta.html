@@ -214,7 +214,7 @@ footer{border-top:1px solid var(--border);padding:20px 56px;display:flex;align-i
             <div class="field-error" id="signin-email-err">Please enter a valid email.</div>
           </div>
           <div class="field">
-            <div class="field-label"><span>Password</span><a href="#" class="forgot">Forgot?</a></div>
+            <div class="field-label"><span>Password</span><a href="#" class="forgot" onclick="handleForgot(event)">Forgot?</a></div>
             <div class="field-pw">
               <input type="password" class="field-input" id="signin-pw" placeholder="••••••••" autocomplete="current-password"/>
               <button type="button" class="pw-toggle" onclick="togglePw('signin-pw',this)">Show</button>
@@ -235,7 +235,7 @@ footer{border-top:1px solid var(--border);padding:20px 56px;display:flex;align-i
           <div class="success-mark">✦</div>
           <div class="success-title">You're in.</div>
           <p class="success-desc">Account created. Your 30-day execution plan is ready to build.</p>
-          <a href="app.html" class="success-btn">Open Command Center →</a>
+          <a href="auth-beta.html" class="success-btn">Back to Sign In →</a>
         </div>
         <div id="signup-form-wrap">
           <div class="auth-title">Create account.</div>
@@ -284,7 +284,41 @@ footer{border-top:1px solid var(--border);padding:20px 56px;display:flex;align-i
     <a href="https://twitter.com/Mani_chukk" target="_blank" rel="noopener" class="footer-link">Twitter</a>
   </div>
 </footer>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script>
+const SUPABASE_URL  = 'https://waiztfanjdoddmczikkj.supabase.co';
+const SUPABASE_ANON = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6IndhaXp0ZmFuamRvZGRtY3ppa2tqIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzcyMDUwMjMsImV4cCI6MjA5Mjc4MTAyM30._jZpUbmDG1lA6weDYiZhFV-OrUPpMXFTLYY4CHVh8QI';
+const _sb = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON);
+
+// Handle email confirmation and password reset tokens from URL
+(async () => {
+  const hash = new URLSearchParams(window.location.hash.substring(1));
+  const query = new URLSearchParams(window.location.search);
+  const accessToken = hash.get('access_token');
+  const refreshToken = hash.get('refresh_token');
+  const type = hash.get('type') || query.get('type');
+  const tokenHash = query.get('token_hash') || hash.get('token_hash');
+
+  if (tokenHash && type === 'signup') {
+    const { error } = await _sb.auth.verifyOtp({ token_hash: tokenHash, type: 'signup' });
+    if (!error) { window.location.href = 'app-beta.html'; return; }
+  }
+  if (accessToken && type === 'signup') {
+    const { error } = await _sb.auth.setSession({ access_token: accessToken, refresh_token: refreshToken });
+    if (!error) { window.location.href = 'app-beta.html'; return; }
+  }
+  if (accessToken && type === 'recovery') {
+    await _sb.auth.setSession({ access_token: accessToken, refresh_token: refreshToken });
+    switchTab('signin');
+    showAlert('signin-alert', 'Session restored. Sign in with your new password.', 'success');
+  }
+})();
+
+// Redirect if already logged in
+_sb.auth.getSession().then(({ data: { session } }) => {
+  if (session) window.location.href = 'app-beta.html';
+});
+
 function switchTab(tab){
   ['signin','signup'].forEach(t=>{
     document.getElementById('tab-'+t).classList.toggle('active',t===tab);
@@ -307,7 +341,7 @@ function setErr(inputId,errId,show){
 function showAlert(id,msg,type){
   const el=document.getElementById(id);
   el.textContent=msg;el.className='form-alert visible '+type;
-  setTimeout(()=>el.classList.remove('visible'),4500);
+  setTimeout(()=>el.classList.remove('visible'),5000);
 }
 function setLoading(btnId,v){
   const b=document.getElementById(btnId);
@@ -322,10 +356,13 @@ async function handleSignin(e){
   ok=setErr('signin-pw','signin-pw-err',!pw)&&ok;
   if(!ok)return;
   setLoading('signin-btn',true);
-  await new Promise(r=>setTimeout(r,1200));
-  // TODO: supabase.auth.signInWithPassword({email,password:pw}) → window.location.href='app.html'
-  showAlert('signin-alert','Connect your auth backend to enable sign in.','error');
-  setLoading('signin-btn',false);
+  const { error } = await _sb.auth.signInWithPassword({ email, password: pw });
+  if(error){
+    showAlert('signin-alert', error.message, 'error');
+    setLoading('signin-btn',false);
+  } else {
+    window.location.href = 'app-beta.html';
+  }
 }
 async function handleSignup(e){
   e.preventDefault();
@@ -338,15 +375,36 @@ async function handleSignup(e){
   ok=setErr('signup-pw','signup-pw-err',pw.length<8)&&ok;
   if(!ok)return;
   setLoading('signup-btn',true);
-  await new Promise(r=>setTimeout(r,1400));
-  // TODO: supabase.auth.signUp({email,password:pw,options:{data:{full_name:name}}})
-  document.getElementById('signup-form-wrap').style.display='none';
-  document.getElementById('signup-success').classList.add('visible');
-  setLoading('signup-btn',false);
+  const { error } = await _sb.auth.signUp({
+    email, password: pw,
+    options: { data: { full_name: name } }
+  });
+  if(error){
+    showAlert('signup-alert', error.message, 'error');
+    setLoading('signup-btn',false);
+  } else {
+    document.getElementById('signup-form-wrap').style.display='none';
+    document.getElementById('signup-success').classList.add('visible');
+  }
 }
-function handleGoogle(form){
-  // TODO: supabase.auth.signInWithOAuth({provider:'google'})
-  showAlert(form+'-alert','Connect Supabase to enable Google auth.','error');
+async function handleGoogle(form){
+  const { error } = await _sb.auth.signInWithOAuth({
+    provider: 'google',
+    options: { redirectTo: window.location.origin + '/app-beta.html' }
+  });
+  if(error) showAlert(form+'-alert', error.message, 'error');
+}
+async function handleForgot(e){
+  e.preventDefault();
+  const email=document.getElementById('signin-email').value.trim();
+  if(!email||!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)){
+    showAlert('signin-alert','Enter your email address above first.','error');return;
+  }
+  const { error } = await _sb.auth.resetPasswordForEmail(email,{
+    redirectTo: window.location.origin + '/auth-beta.html'
+  });
+  if(error){ showAlert('signin-alert',error.message,'error'); }
+  else { showAlert('signin-alert','Password reset email sent. Check your inbox.','success'); }
 }
 const p=new URLSearchParams(window.location.search);
 if(p.get('tab')==='signup')switchTab('signup');
