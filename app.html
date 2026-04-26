@@ -9,6 +9,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;0,700;1,300;1,400;1,500&family=Outfit:wght@200;300;400;500;600&family=DM+Mono:wght@300;400;500&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <style>
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
 :root{
@@ -371,7 +372,7 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:14px;heigh
     </div>
     <div class="tb-right">
       <div style="text-align:right"><div class="tb-streak-val">1</div><div class="tb-streak-lbl">Day Streak</div></div>
-      <div class="tb-avatar" id="db-avatar">M</div>
+      <div class="tb-avatar" id="db-avatar" onclick="handleSignOut()" title="Sign out">M</div>
     </div>
   </div>
   <div class="prog-row">
@@ -432,6 +433,25 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:14px;heigh
 </div>
 
 <script>
+const SUPABASE_URL  = 'https://waiztfanjdoddmczikkj.supabase.co';
+const SUPABASE_ANON = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6IndhaXp0ZmFuamRvZGRtY3ppa2tqIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzcyMDUwMjMsImV4cCI6MjA5Mjc4MTAyM30._jZpUbmDG1lA6weDYiZhFV-OrUPpMXFTLYY4CHVh8QI';
+const _sb = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON);
+
+// Session guard — redirect to auth if not logged in
+let currentUser = null;
+_sb.auth.getSession().then(({ data: { session } }) => {
+  if (!session) { window.location.href = 'auth.html'; return; }
+  currentUser = session.user;
+  const name = currentUser.user_metadata?.full_name || currentUser.email || '';
+  const avatar = document.getElementById('db-avatar');
+  if (avatar) avatar.textContent = name.charAt(0).toUpperCase();
+});
+
+async function handleSignOut() {
+  await _sb.auth.signOut();
+  window.location.href = 'auth.html';
+}
+
 let currentStep=1,founderData={},planData=null,taskState={},insightIdx=0,insights=[];
 const FREE_PLAN_LIMIT=1,FREE_CONTENT_LIMIT=3;
 let plansUsed=parseInt(localStorage.getItem('rayseos_plans_used')||'0');
