@@ -9,7 +9,6 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;0,700;1,300;1,400;1,500&family=Outfit:wght@200;300;400;500;600&family=DM+Mono:wght@300;400;500&display=swap" rel="stylesheet">
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <style>
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
 :root{
@@ -167,6 +166,10 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:14px;heigh
 .gen-hook{font-family:var(--serif);font-size:13px;font-style:italic;color:rgba(242,241,238,0.58);line-height:1.5;margin-bottom:5px}
 .gen-body{font-size:11px;color:rgba(242,241,238,0.28);line-height:1.6;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;margin-bottom:5px}
 .gen-tip{font-family:var(--mono);font-size:9px;color:rgba(232,201,125,0.45)}
+.gen-copy-row{display:flex;justify-content:flex-end;margin-top:8px}
+.gen-copy-btn{padding:4px 10px;border:1px solid rgba(232,201,125,0.2);background:transparent;color:rgba(232,201,125,0.5);font-family:var(--mono);font-size:8px;font-weight:300;letter-spacing:0.1em;text-transform:uppercase;cursor:pointer;transition:all 0.2s}
+.gen-copy-btn:hover{border-color:var(--blade);color:var(--blade);background:var(--blade-dim)}
+.gen-copy-btn.copied{color:var(--green);border-color:rgba(126,203,155,0.3)}
 .gen-btn{width:100%;padding:7px 0;border:1px solid rgba(232,201,125,0.18);background:transparent;color:rgba(232,201,125,0.55);font-family:var(--mono);font-size:9px;font-weight:300;letter-spacing:0.1em;text-transform:uppercase;cursor:pointer;transition:all 0.2s}
 .gen-btn:hover:not(:disabled){border-color:var(--blade);color:var(--blade);background:var(--blade-dim)}
 .gen-btn:disabled{opacity:0.22;cursor:not-allowed}
@@ -372,7 +375,7 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:14px;heigh
     </div>
     <div class="tb-right">
       <div style="text-align:right"><div class="tb-streak-val">1</div><div class="tb-streak-lbl">Day Streak</div></div>
-      <div class="tb-avatar" id="db-avatar" onclick="handleSignOut()" title="Sign out">M</div>
+      <div class="tb-avatar" id="db-avatar">M</div>
     </div>
   </div>
   <div class="prog-row">
@@ -433,25 +436,6 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:14px;heigh
 </div>
 
 <script>
-const SUPABASE_URL  = 'https://waiztfanjdoddmczikkj.supabase.co';
-const SUPABASE_ANON = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6IndhaXp0ZmFuamRvZGRtY3ppa2tqIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzcyMDUwMjMsImV4cCI6MjA5Mjc4MTAyM30._jZpUbmDG1lA6weDYiZhFV-OrUPpMXFTLYY4CHVh8QI';
-const _sb = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON);
-
-// Session guard — redirect to auth if not logged in
-let currentUser = null;
-_sb.auth.getSession().then(({ data: { session } }) => {
-  if (!session) { window.location.href = 'auth-beta.html'; return; }
-  currentUser = session.user;
-  const name = currentUser.user_metadata?.full_name || currentUser.email || '';
-  const avatar = document.getElementById('db-avatar');
-  if (avatar) avatar.textContent = name.charAt(0).toUpperCase();
-});
-
-async function handleSignOut() {
-  await _sb.auth.signOut();
-  window.location.href = 'auth-beta.html';
-}
-
 let currentStep=1,founderData={},planData=null,taskState={},insightIdx=0,insights=[];
 const FREE_PLAN_LIMIT=1,FREE_CONTENT_LIMIT=3;
 let plansUsed=parseInt(localStorage.getItem('rayseos_plans_used')||'0');
@@ -532,7 +516,7 @@ function populateDashboard(){
     const ptag=getPtag(task.platform);
     list.innerHTML+=`<div class="task-card" id="task${id}"><div class="task-top"><span class="ptag ${ptag}">${task.platform}</span><button class="check-btn" onclick="toggleTask(${id})"><span class="checkmark">✓</span></button></div><div class="task-title">${task.title}</div><div class="gen-box" id="gen${id}"></div><button class="gen-btn" id="genbtn${id}" onclick="generateContent(${id},'${task.platform.replace(/'/g,"\\'")}','${task.title.replace(/'/g,"\\'")}','${(task.hook||'').replace(/'/g,"\\'")}','${(task.content||'').replace(/'/g,"\\'")}')">Generate Content</button></div>`;
   });
-    updateTaskCount();setTimeout(()=>showScreen('dashboard'),100);
+  updateTaskCount();showScreen('dashboard');
 }
 
 function getPtag(p){p=p.toLowerCase();if(p.includes('tiktok'))return'ptag-tiktok';if(p.includes('x')||p.includes('twitter'))return'ptag-x';if(p.includes('linkedin'))return'ptag-linkedin';if(p.includes('instagram'))return'ptag-instagram';if(p.includes('reddit'))return'ptag-reddit';return'ptag-growth'}
@@ -549,7 +533,8 @@ async function generateContent(id,platform,title,hint_hook,hint_body){
     const data=await res.json();
     const raw=data.content.map(b=>b.text||'').join('');
     const json=JSON.parse(raw.replace(/```json|```/g,'').trim());
-    box.innerHTML=`<div class="gen-lbl">Hook</div><div class="gen-hook">"${json.hook}"</div><div class="gen-body">${json.content}</div>${json.tip?`<div class="gen-tip">— ${json.tip}</div>`:''}`;
+    const copyText = json.hook + '\n\n' + json.content + (json.cta ? '\n\n' + json.cta : '');
+    box.innerHTML=`<div class="gen-lbl">Hook</div><div class="gen-hook">"${json.hook}"</div><div class="gen-body">${json.content}</div>${json.tip?`<div class="gen-tip">— ${json.tip}</div>`:''}<div class="gen-copy-row"><button class="gen-copy-btn" onclick="copyContent(this,'${encodeURIComponent(copyText)}')">Copy Content</button></div>`;
     box.classList.add('visible');btn.textContent='Regenerate';
     contentUsed++;localStorage.setItem('rayseos_content_used',contentUsed);
   }catch(e){
@@ -559,10 +544,29 @@ async function generateContent(id,platform,title,hint_hook,hint_body){
   btn.disabled=false;
 }
 
+function copyContent(btn, encoded) {
+  const text = decodeURIComponent(encoded);
+  navigator.clipboard.writeText(text).then(() => {
+    btn.textContent = 'Copied ✓';
+    btn.classList.add('copied');
+    setTimeout(() => { btn.textContent = 'Copy Content'; btn.classList.remove('copied'); }, 2000);
+  }).catch(() => {
+    btn.textContent = 'Copy Content';
+  });
+}
 function handleExecute(){const btn=document.getElementById('executeBtn'),txt=document.getElementById('executeBtnTxt');if(btn.classList.contains('done')||btn.classList.contains('loading'))return;btn.classList.add('loading');txt.textContent='Preparing...';setTimeout(()=>{btn.classList.remove('loading');btn.classList.add('done');txt.textContent='✓ Execution Started';},1500)}
 function cycleInsight(){if(!insights.length)return;insightIdx=(insightIdx+1)%insights.length;const el=document.getElementById('db-insight');el.style.opacity='0';el.style.transition='opacity 0.2s';setTimeout(()=>{el.innerHTML=insights[insightIdx];el.style.opacity='1';},200)}
 function logMetrics(btn){btn.textContent='✓ Logged';btn.style.color='var(--green)';btn.style.borderColor='rgba(126,203,155,0.2)';setTimeout(()=>{btn.textContent='+ Log Today\'s Metrics';btn.style.color='';btn.style.borderColor='';},2000)}
-function showScreen(name){document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));const map={onboard:'screen-onboard',generating:'screen-generating',dashboard:'screen-dashboard'};document.getElementById(map[name]).classList.add('active')}
+function showScreen(name){
+  document.querySelectorAll('.screen').forEach(s=>{s.classList.remove('active');s.style.display='';});
+  const map={onboard:'screen-onboard',generating:'screen-generating',dashboard:'screen-dashboard'};
+  const target=document.getElementById(map[name]);
+  target.classList.add('active');
+  if(name==='dashboard'){
+    const gen=document.getElementById('screen-generating');
+    gen.style.display='none';
+  }
+}
 </script>
 </body>
 </html>
